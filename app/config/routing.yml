@@ -1,0 +1,83 @@
+DinoBundle_ajax_save_parameters:
+    path:  /dino_account/ajax
+    defaults: { _controller: DinoBundle:Ajax:ajax }
+
+Check_if_parameters_can_be_modified:
+    path:  /dino_account/ajax_mod
+    defaults: { _controller: DinoBundle:Ajax:updateAjax }
+
+Check_materials:
+    path: /dino_account/ajax_materials
+    defaults: { _controller: DinoBundle:Ajax:materialAjax}
+
+Add_dino_home:
+    path: /dino_account/ajax_add_home
+    defaults: { _controller: DinoBundle:Ajax:addHomeAjax}
+
+AdminShowUsers:
+    path: /admin/ajax_show_users
+    defaults: { _controller: AdminBundle:Panel:users}
+
+AdminShowDaschboard:
+    path: /admin/ajax_show_dashboard
+    defaults: { _controller: AdminBundle:Panel:daschboard}
+
+Admin_edit_users:
+    path: /admin/ajax_edit_users
+    defaults: { _controller: AdminBundle:Panel:editUsers}
+
+Admin_save_user_change:
+    path: /admin/ajax_save_user_change/{id}
+    defaults: { _controller: AdminBundle:Panel:saveUsers}
+    methods: [POST|GET]
+
+Sort_users_in_admin_panel:
+    path: /admin/ajax_sort_users
+    defaults: { _controller: AdminBundle:Panel:sorts}
+
+Show_result_of_admin_search:
+    path: /admin/ajax_show_search
+    defaults: { _controller: AdminBundle:Panel:search}
+
+api_login_check:
+    path: /api/login_check
+
+add_user_dino:
+    resource: "@AddUserDinoBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+add_user_dino_api:
+    resource: "@AddUserDinoBundle/Controller/Api"
+    type:     annotation
+    prefix:   /
+
+admin:
+    resource: "@AdminBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+dino:
+    resource: "@DinoBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+

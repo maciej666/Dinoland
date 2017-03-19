@@ -1,0 +1,179 @@
+<table class="table table-bordered table-striped">
+
+<thead>
+<tr>
+    <th>
+        Id<br>
+        <small>(Tej informacji nie zmieniaj)</small><br>
+        <span class="glyphicon glyphicon-sort-by-order user-sort asc"  data-sort="id.asc" style="margin-left: 10px;"></span><span class="glyphicon glyphicon-sort-by-order-alt user-sort" data-sort="id.desc" style="margin-left: 50px;"></span>
+    </th>
+    <th >
+        Email<br>
+        <small>(Służy do logowania)</small><br>
+        <span class="glyphicon glyphicon-sort-by-alphabet user-sort asc"  data-sort="email.asc" style="margin-left: 20px;"></span><span class="glyphicon glyphicon-sort-by-alphabet-alt user-sort" data-sort="email.desc" style="margin-left: 80px;"></span>
+    </th>
+    <th>
+        Aktywacja konta<br>
+        <small>(0 - nieaktywne, 1 - aktywne)</small><br>
+        <span class="glyphicon glyphicon-sort-by-order user-sort" data-sort="enabled.asc" style="margin-left: 10px;"></span><span class="glyphicon glyphicon-sort-by-order-alt user-sort" data-sort="enabled.desc" style="margin-left: 50px;"></span>
+    </th>
+    <th>
+        Poziom dostępu<br>
+        <small>(Bądź ostrożny zmieniając to pole)</small><br>
+        <span class="glyphicon glyphicon-sort-by-alphabet v user-sort" data-sort="id.asc" style="margin-left: 10px;"></span><span class="glyphicon glyphicon-sort-by-alphabet-alt user-sort" data-sort="id.desc" style="margin-left: 60px;"></span>
+    </th>
+    <th>
+        Dino-imię<br>
+        <small>(Zaczyna się na literę D(d))</small><br>
+        <span class="glyphicon glyphicon-sort-by-alphabet user-sort" data-sort="name.asc" style="margin-left: 10px;"></span><span class="glyphicon glyphicon-sort-by-alphabet-alt user-sort" data-sort="name.desc" style="margin-left: 55px;"></span>
+    </th>
+    <th>
+        Gatunek Dina<br>
+        <small>(Dostępnych jest 9 różnych gatunków)</small><br>
+        <span class="glyphicon glyphicon-sort-by-alphabet user-sort" data-sort="species.asc" style="margin-left: 10px;"></span><span class="glyphicon glyphicon-sort-by-alphabet-alt user-sort" data-sort="species.desc" style="margin-left: 65px;"></span>
+    </th>
+    <th>
+        Wiek Dina<br>
+        <small>(Diny w różnym wieku mają różne umiejętności)</small><br>
+        <span class="glyphicon glyphicon-sort-by-order user-sort" data-sort="age.asc" style="margin-left: 20px;"></span><span class="glyphicon glyphicon-sort-by-order-alt user-sort" data-sort="age.desc" style="margin-left: 80px;"></span>
+    </th>
+</tr>
+</thead>
+<tbody>
+{#Tu się wyświetla user dopiero co zedytowany z innym stylem#}
+{% if edited != false %}
+    <style>
+        #edited-user {
+            cursor: pointer;
+            background-color: darkorange!important;
+        }
+    </style>
+    <tr class="users-in-table" id="edited-user" data-edituser="{{ user.id }}" >
+        <td >{{ user.id }}</td>
+        <td>{{ user.email }}</td>
+        <td>{% if user.enabled == 0 %} 0
+            {% else %}{{ user.enabled }}{% endif %}
+        </td>
+        <td> ROLE_USER - fake </td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.species }}</td>
+        <td>{{ user.age }}</td>
+    </tr>
+{% endif %}
+{% for user in users if user.id != edited  %}
+    <style>
+        .users-in-table:hover {
+            cursor: pointer;
+            background-color: #bce8f1!important;
+        }
+    </style>
+    <tr class="users-in-table" data-edituser="{{ user.id }}">
+        <td >{{ user.id }}</td>
+        <td>{{ user.email }}</td>
+        <td>{% if user.enabled == 0 %} 0
+            {% else %}{{ user.enabled }}{% endif %}
+        </td>
+        <td> ROLE_USER - fake </td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.species }}</td>
+        <td>{{ user.age }}</td>
+    </tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+
+
+{#<script>#}
+
+    {#$(document).ready(function(){#}
+
+    {#// Funkcja umożliwia edycje klikniętego usera#}
+        {#$('.users-in-table').on('click', function(e){#}
+            {#e.preventDefault();#}
+            {#var id = $(this).data('edituser');#}
+
+            {#$.post('{{path('Admin_edit_users')}}',#}
+                    {#{#}
+                        {#id: id#}
+                    {#},#}
+                    {#function (response) {#}
+                        {#if (response.code == 200 && response.success) {#}
+
+                            {#var parsedData =JSON.parse(response.content);#}
+                            {#var wrapper = $("#edit-dino-form");#}
+                            {#wrapper.empty();#}
+                            {#wrapper.html(parsedData);#}
+                            {#window.scrollTo(0,document.body.scrollHeight);#}
+                            {#saveChange(id);#}
+{#//                            initAjaxForm(id);#}
+                        {#} else {#}
+
+                        {#}#}
+
+                    {#}, "json");#}
+
+        {#});#}
+
+        {#function saveChange(id){#}
+            {#console.log('3');#}
+            {#$('.save_user_ajax').on('submit', function(e){#}
+                {#e.preventDefault();#}
+                {#console.log();#}
+                {#$.post('/app_dev.php/admin/ajax_save_user_change/'+id, $(this).serialize(),#}
+                        {#function (response) {#}
+                            {#if (response.code == 200 && response.success) {#}
+
+                                {#var parsedData =JSON.parse(response.content);#}
+                                {#var wrapper = $("#tabello");#}
+                                {#var editDinoForm = $("#edit-dino-form");#}
+                                {#wrapper.empty();#}
+                                {#editDinoForm.empty();#}
+                                {#wrapper.html(parsedData);#}
+                                {#window.scrollTo(0,0);#}
+
+                            {#} else if(response.code == 400 && !response.success) {#}
+                                {#var parsedData =JSON.parse(response.content);#}
+                                {#var wrapper = $("#edit-dino-form");#}
+                                {#wrapper.empty();#}
+                                {#wrapper.html(parsedData);#}
+                                {#saveChange(id);#}
+                            {#}#}
+
+                        {#}, "json");#}
+
+            {#});#}
+        {#}#}
+
+{#//------------------------------------------------------------------------------------------------------#}
+        {#var sortClass = $(".user-sort");#}
+        {#//funkcja sortuje tabele z userami#}
+        {#sortClass.click(function()#}
+        {#{#}
+            {#//jeżli przed sortowaniem user wyszukiwał coś to pobieram treść tego wyszukiwania#}
+            {#//aby sortować tylko wyszukiwane pozycje#}
+            {#var searchVal = $("input[type=text][name=show-result]").val();#}
+
+            {#var sort = $(this).data('sort');#}
+{#//            var sortType = $(this).data('sortType');#}
+
+            {#$.post('{{path('Sort_users_in_admin_panel')}}',#}
+                    {#{#}
+                        {#searchVal: searchVal,#}
+{#//                        sortType: sortType,#}
+                        {#sort: sort#}
+                    {#},#}
+                    {#function (response) {#}
+                        {#if (response.code == 100 && response.success)#}
+                        {#{#}
+                            {#var parsedData =JSON.parse(response.content);#}
+                            {#var wrapper = $("#tabello");#}
+                            {#wrapper.empty();#}
+                            {#wrapper.html(parsedData);#}
+                        {#} else {#}
+                        {#}#}
+                    {#}, "json");#}
+        {#});#}
+    {#});#}
+{#</script>#}

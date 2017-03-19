@@ -1,0 +1,297 @@
+{% extends 'DinoBundle::base.html.twig' %}
+{% block ajax %}
+    {{ parent() }}
+    onload="checkTime();"
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/dino/js/myJavaScripts.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <style>
+        body{
+            font-family: 'Tillana', cursive;
+        }
+    </style>
+
+    <div class="container-fluid bg-grey" >
+        {#with {'class': 'col-sm-12'}#}
+        <div class="row text-center right" style="text-align: center; margin-top: 15px;">
+            <div class="col-sm-8" >
+                {% include 'DinoBundle:Main:dino_long.svg.twig'  %}
+                <input type="hidden" name="access" id="access" value="{{ dino_materials.access }}">
+                <p ></p>
+            </div>
+            <div class="col-sm-1">
+                <span  style="text-align: left; font-family: 'Tillana', cursive;">DREWNO</span>
+                {% include 'DinoBundle:Main:x_wood.svg.twig'  %}
+                <span class="material" id="drewno">{{ dino_materials.wood }}</span>
+            </div>
+            <div class="col-sm-1">
+                <span  style="text-align: left; font-family: 'Tillana', cursive;">KAMIEŃ</span>
+                {% include 'DinoBundle:Main:x_stone.svg.twig'%}
+                <span class="material" id="kamien">{{ dino_materials.stone }}</span>
+            </div>
+            <div class="col-sm-1">
+                <span  style="text-align: left; font-family: 'Tillana', cursive;">KOŚĆ</span>
+                {% include 'DinoBundle:Main:x_bone.svg.twig'%}
+                <span class="material" id="kosc">{{ dino_materials.bone }}</span>
+            </div>
+            <div class="col-sm-1">
+                <span  style="text-align: left; font-family: 'Tillana', cursive;">KRZEMIEŃ</span>
+                {% include 'DinoBundle:Main:x_flint.svg.twig'%}
+                <span class="material" id="krzemien">{{ dino_materials.flint }}</span>
+            </div>
+        <style scoped>
+            .material {
+                font-family: 'Tillana', cursive;
+                font-weight: bold;
+            }
+        </style>
+
+        </div>
+
+
+        <div class="row " style="margin-bottom: 30px; " >
+            <div class="col-sm-8">
+                <h2 style="margin-bottom: 0px;" >Dzienny przydział mocy: <span id="sum">2</span> <span id ="qwe"></span></h2>
+                <span style="font-size: 14px;" > (Dzienny przydział sam się nie przydzieli. Nie zmarnuj go!) </span>
+                {#Przechowuje czas pozostały do update'a#}
+                <span id="time_to_update" data-time="{{ time_to_update }}" style="display: none;"></span>
+            </div>
+
+            <div class="col-sm-4" style="text-align: center;">
+                <h4 id="info" style="color: #CC66CC; padding: 0px; display: none;"><span id="ile"></span></h4>
+            </div>
+
+        </div>
+        <div class="row text-center ">
+                <div class="col-sm-3">
+                    <div class="thumbnail" style="padding-top: 25px;">
+                        <div class="row">
+                            <button  onclick="minusPointsHealth();"  class="btn-default btn-xs" style="width:25px; margin-right: 40px; border: none;"><span class="glyphicon glyphicon-minus" ></span></button>
+                            <span class="glyphicon glyphicon-plus logo-small"></span>
+                            <button  onclick="addPointsHealth();"  class="btn-default btn-xs" style="width:25px; margin-left: 40px; border: none;"><span class="glyphicon glyphicon-plus" ></span></button>
+                        </div>
+                        <p><strong>Żywotność</strong></p>
+                        <p id="health">{{ dino_parameters.health }}</p>
+                        <input id ="begin_value_health" type="hidden" value="{{ dino_parameters.health }}">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="thumbnail" style="padding-top: 25px;">
+                        <div class="row">
+                            <button onclick="minusPointsStrength();" class="btn-default btn-xs" style="width:25px; margin-right: 40px; border: none;"><span class="glyphicon glyphicon-minus" ></span></button>
+                            <span class="glyphicon glyphicon-fire logo-small"></span>
+                            <button onclick="addPointsStrength();" class="btn-default btn-xs" style="width:25px; margin-left: 40px; border: none;"><span class="glyphicon glyphicon-plus" ></span></button>
+                        </div>
+                        <p><strong>Siła</strong></p>
+                        <p id="strength">{{ dino_parameters.strength }}</p>
+                        <input id ="begin_value_strength" type="hidden" value="{{ dino_parameters.strength }}">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="thumbnail" style="padding-top: 25px;">
+                        <div class="row">
+                            <button id onclick="minusPointsBackup();" class="btn-default btn-xs" style="width:25px; margin-right: 40px; border: none;"><span class="glyphicon glyphicon-minus" ></span></button>
+                            <span class="glyphicon glyphicon-earphone logo-small"></span>
+                            <button onclick="addPointsBackup();" class="btn-default btn-xs" style="width:25px; margin-left: 40px; border: none;"><span class="glyphicon glyphicon-plus" ></span></button>
+                        </div>
+                        <p><strong>Wsparcie</strong></p>
+                        <p id="backup">{{ dino_parameters.backup }}</p>
+                        <input id ="begin_value_backup" type="hidden" value="{{ dino_parameters.backup }}">
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="thumbnail" style="padding-top: 25px;">
+                        <div class="row">
+                            <button onclick="minusPointsSpeed();" class="btn-default btn-xs" style="width:25px; margin-right: 40px; border: none;"><span class="glyphicon glyphicon-minus" ></span></button>
+                            <span class="glyphicon glyphicon-forward logo-small"></span>
+                            <button onclick="addPointsSpeed();" class="btn-default btn-xs" style="width:25px; margin-left: 40px; border: none;"><span class="glyphicon glyphicon-plus" ></span></button>
+                        </div>
+                        <p><strong>Szybkość</strong></p>
+                        <p id="speed">{{ dino_parameters.speed }}</p>
+                        <input id ="begin_value_speed" type="hidden" value="{{ dino_parameters.speed }}">
+                    </div>
+                </div>
+            </div>
+        <button id="dino_button" onclick ="aButtonPressed();" data-url="http://www.dino.dev/app_dev.php/dino_account/ajax" class="btn btn-default btn-lg" style="border: none;">Ulepsz</button>
+        <p id="odp" data-url="http://www.dino.dev/app_dev.php/dino_account/ajax_mod" style="font-weight: bold;"></p>
+
+        <div style="text-align: left;" class="whole" >
+                        <h2 style="margin-top: 35px; margin-bottom: 0px;"> DINO SCHRONY: </h2>
+                        <span style="font-size: 14px; " >(Dino bez schronu to jak żołnierz bez karabinu)</span>
+
+                        {#------------DINO SCHRONY-------------------#}
+
+                    {% for cont in content %}
+
+                                    {% set i = loop.index0*2 %}
+
+                    <div class="row" style="margin-top: 25px;">
+                        <div class="col-sm-3" style="text-align: center;">
+                                <span style="color:black; "> {{ cont.homeName }} </span>
+
+
+                               {{ source(cont.foto) }}
+
+                                {#Też działa#}
+                                {#{% include (cont.foto) %}#}
+                        </div>
+
+                        <div class="col-sm-1">
+
+                        </div>
+
+                        <div class="col-sm-4">
+
+                                {% if dino_materials.access > i %}
+                                    <p style="margin-bottom: 0px; color: #ffaa00;" >POZIOM {{ i +1 }} WYKUPIONY</p>
+                                {% elseif dino_materials.access == i and dino_home[i] == i  %}
+                                    <p style="margin-bottom: 0px; color: yellowgreen;" >POZIOM {{ i + 1 }} WYKUP</p>
+                                {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                    <p style="margin-bottom: 0px; color: #253300;" >POZIOM {{ i + 1 }} NIE STAĆ CIĘ</p>
+                                {% else %}
+                                    <p style="margin-bottom: 0px; color: red;" >POZIOM {{ i + 1 }} NIEDOSTĘPNY </p>
+                                {% endif %}
+
+                            <div class="col-sm-6" style="text-align: center;">
+
+                                <ul>Wymagania:
+                                    <li>Drewno: {{ cont.reqWood1 }}</li>
+                                    <li>Kamień: {{ cont.reqStone1 }}</li>
+                                    <li>Kość: {{ cont.reqBone1 }}</li>
+                                    <li>Krzemień: {{ cont.reqFlint1 }}</li>
+                                </ul>
+                                     {#dino_materials.access sprawdza co user ma wykupione#}
+                                     {#dino_home czy ma odpowiednią ilość surowca żeby wykupić kolejny schron#}
+                                    {% if dino_materials.access == i and dino_home[i] == i  %}
+                                        <button type="button" style="border: none;" id="btnHome" onclick="addHome();" class="btn btn-default">Wyposaż</button>
+                                        <span id="home_btn" style="display: none;">{{ i }}</span>
+                                    {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                        <button type="button" style="border: none;"  class="btn btn-default disabled"> brak surowca </button>
+                                    {% elseif dino_materials.access > i %}
+                                        <span class="glyphicon glyphicon-home">  </span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-ban-circle"></span>
+                                    {% endif %}
+
+                            </div>
+
+                            <div class="col-sm-6" style="border-left: 6px solid blue; text-align: justify; background-color: lightgrey;">
+                                {{ cont.descriptionLvl1 }}
+                            </div>
+
+                        </div>
+{#------------------------------------------------------------------------------------------------------#}
+                        <div class="col-sm-4">
+
+                                    {% set i = i + 1 %}
+
+                                {% if dino_materials.access > i %}
+                                    <p style="margin-bottom: 0px; color: #ffaa00;" >POZIOM {{ i +1 }} WYKUPIONY</p>
+                                {% elseif dino_materials.access == i and dino_home[i] == i  %}
+                                    <p style="margin-bottom: 0px; color: yellowgreen;" >POZIOM {{ i + 1 }} WYKUP</p>
+                                {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                    <p style="margin-bottom: 0px; color: #253300;" >POZIOM {{ i + 1 }} NIE STAĆ CIĘ</p>
+                                {% else %}
+                                    <p style="margin-bottom: 0px; color: red;" >POZIOM {{ i + 1 }} NIEDOSTĘPNY </p>
+                                {% endif %}
+                            <div class="col-sm-6" style="text-align: center;">
+
+                                <ul>Wymagania:
+                                    <li>Drewno: {{ cont.reqWood2 }}</li>
+                                    <li>Kamień: {{ cont.reqStone2 }}</li>
+                                    <li>Kość: {{ cont.reqBone2 }}</li>
+                                    <li>Krzemień: {{ cont.reqFlint2 }}</li>
+                                </ul>
+
+                                    {% if dino_materials.access == i and dino_home[i] == i  %}
+                                        <button type="button" style="border: none;" id="btnHome" onclick="addHome();" class="btn btn-default">Wyposaż</button>
+                                        <span id="home_btn" style="display: none;">{{ i }}</span>
+                                    {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                        <button type="button" style="border: none;"  class="btn btn-default disabled">brak surowca</button>
+                                    {% elseif dino_materials.access > i %}
+                                        <span class="glyphicon glyphicon-home">  </span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-ban-circle"></span>
+                                    {% endif %}
+
+                            </div>
+
+                            <div class="col-sm-6" style="border-left: 6px solid blue; text-align: justify; background-color: lightgrey;">
+                                {{ cont.descriptionLvl2 }}
+                            </div>
+
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+                {#Style zależnie od wykupionych poziomów#}
+                                {% if dino_materials.access >= 1 %}
+                                <style scoped>
+                                #schron1 {
+                                    opacity: 0.3;
+                                }
+                                </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 2 %}
+                                <style scoped>
+                                #schron1 {
+                                    opacity: 1;
+                                }
+                                </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 3 %}
+                                <style scoped>
+                                #schron2 {
+                                    opacity: 0.3;
+                                }
+                                </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 4 %}
+                                <style scoped>
+                                #schron2 {
+                                    opacity: 1;
+                                }
+                                </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 5 %}
+                                <style scoped>
+                                #schron3 {
+                                    opacity: 0.3;
+                                }
+                                </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 6 %}
+                                <style scoped>
+                                #schron3 {
+                                    opacity: 1;
+                                }
+                                </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 7 %}
+                                <style scoped>
+                                #schron4 {
+                                    opacity: 0.3;
+                                }
+                                </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 8 %}
+                                <style scoped>
+                                #schron4 {
+                                    opacity: 1;
+                                }
+                                </style>
+                                {% endif %}
+                </div>
+
+            </div>
+
+{% endblock %}

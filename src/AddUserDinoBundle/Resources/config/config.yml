@@ -1,0 +1,9 @@
+fos_user:
+    registration:
+        form:
+            type: acme_user_registration
+            validation_groups: [AcmeRegistration]
+    profile:
+        form:
+            type: acme_user_profile
+            validation_groups: [AcmeProfile]

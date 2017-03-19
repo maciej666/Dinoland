@@ -1,0 +1,51 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+
+{% if app.user is null %}
+<div class="row">
+    <div class="col-sm-4">
+    </div>
+    <div class="col-sm-4">
+         <h3>Zaloguj się śmiertelniku</h3>
+         {% if error %}
+             <div style="color: #FF6347;">Nie ma takiego właściciela :( </div>
+         {% endif %}
+    </div>
+</div>
+
+<form action="{{ path("fos_user_security_check") }}" method="post" class="form-horizontal" style="margin-top: 1%;">
+    {% if csrf_token %}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+    {% endif %}
+
+    <div class="row" style="margin-bottom: 1%;">
+        <label for="email" class="col-sm-4 control-label required">Email</label>
+        <div class="col-sm-4">
+            <input type="email" class="form-control" id="_username" name="_username" value="{{ last_username }}" required="required" />
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 1%;">
+        <label class="col-sm-4 control-label required" for="password">{{ 'security.login.password'|trans }}</label>
+        <div class="col-sm-4">
+            <input type="password" id="password" class="form-control" name="_password" required="required" />
+        </div>
+    </div>
+
+    <div class="row"  style="margin-bottom: 1%;">
+        <div class="col-sm-4"></div>
+        <label for="remember_me" class="checkbox-inline col-sm-4">
+        <input type="checkbox" id="remember_me" name="_remember_me" value="on" />{{ 'security.login.remember_me'|trans }}</label>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <input type="submit" class="col-sm-1 btn-success " id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+    </div>
+
+</form>
+{% else %}
+    <div style="text-align: center; margin-top: 3%;">
+    Jesteś zalogowany śmiertelniku <a href="{{ path('fos_user_security_logout') }}">(Wyloguj się {{ app.user }})</a>
+    </div>
+{% endif %}

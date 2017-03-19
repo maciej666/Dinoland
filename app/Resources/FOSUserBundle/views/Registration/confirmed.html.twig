@@ -1,0 +1,9 @@
+{% extends 'FOSUserBundle::layout.html.twig' %}
+
+{% block fos_user_content %}
+
+    <div class="container-fluid bg-grey">
+        <h3 style="text-align: center; padding-top: 50px;"> Witaj {{ app.user }}. Rejestracja potwierdzona:) Zajrzyj do swojego <a href="{{ path('dino_account') }}">Dina.</a></h3>
+    </div>
+
+{% endblock %}

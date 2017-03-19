@@ -1,0 +1,90 @@
+ <div class="row">
+                <!--page header-->
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dino użytkownicy - admin <span id="qwe"> </span></h1>
+                </div>
+                 <!--end page header-->
+            </div>
+            <!-- row -->
+            <div class="row users-list">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <h3 style="margin-bottom: 0px;">Lista użytkowników</h3> <h6 style="margin-top: 0px;">(Kliknij aby edytować)</h6>
+                                    <p>Możesz tutaj zmienić dane dotyczące użytkowników, status aktywności ich konta i podstawowe info na temat dina.</p></div>
+                                <div class="col-sm-4" style="margin-top: 40px; margin-bottom: 10px;">
+                                    <div class="input-group custom-search-form" style="width:90%;">
+                                        <input type="text" class="form-control"  style="margin-bottom: 5px;" name="show-result" placeholder="Szukaj...">
+                                        <h6 style="margin-bottom: 0px;">Czego szukam?</h6>
+                                        <label class="checkbox-inline"><input type="checkbox" id="email" checked>Email</label>
+                                        <label class="checkbox-inline"><input type="checkbox" id="name" checked>Imię</label>
+                                        <label class="checkbox-inline"><input type="checkbox" id="species" checked>Gatunek</label>
+                                        <label class="checkbox-inline"><input type="checkbox" id="age" checked >Wiek</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive" id="tabello">
+
+
+                                    {% include 'AdminBundle:Panel:tabello.html.twig' %}
+
+
+                            </div>
+                            <div id="edit-dino-form" >
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
+
+            {#<script>#}
+                {#$(document).ready(function(){#}
+
+                    {#//funkcja wyszukuje tekstu w tabeli users#}
+                    {#$("input[type=text][name=show-result]").keyup(function(){#}
+
+                        {#//wartość wpisanego tekstu w polu szukaj#}
+                        {#var search = $(this).val();#}
+
+                        {#//sprawdza które filtry są zaznaczone#}
+
+
+                        {#var email =  $('#email').is(':checked');#}
+                        {#var name =  $('#name').is(':checked');#}
+                        {#var age =  $('#age').is(':checked');#}
+                        {#var species =  $('#species').is(':checked');#}
+
+                        {#$.post('{{path('Show_result_of_admin_search')}}',#}
+                                {#{#}
+                                    {#search: search,#}
+                                    {#email: email ? 1 : 0,#}
+                                    {#name: name ? 1 : 0,#}
+                                    {#age: age ? 1 : 0,#}
+                                    {#species: species ? 1 : 0#}
+                                {#},#}
+                                {#function (response) {#}
+                                    {#if (response.code == 200 && response.success) {#}
+
+                                        {#var parsedData =JSON.parse(response.content);#}
+                                        {#var wrapper = $("#tabello");#}
+                                        {#wrapper.empty();#}
+                                        {#wrapper.html(parsedData);#}
+
+                                    {#} else {#}
+
+                                    {#}#}
+
+                                {#}, "json");#}
+
+                    {#});#}
+
+                {#});#}
+            {#</script>#}

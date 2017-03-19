@@ -1,0 +1,51 @@
+{% form_theme editForm 'bootstrap_3_layout.html.twig' %}
+
+<div class="row">
+    {{ form_start(editForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
+    <div class="col-sm-4">
+        <h3> Dane użytkownika </h3>
+
+
+        {{ form_row(editForm.email) }}
+        {{ form_row(editForm.name) }}
+        {{ form_row(editForm.species) }}
+        {{ form_row(editForm.age) }}
+        {{ form_row(editForm.plainPassword) }}
+        {#{{ form_errors(editForm) }}#}
+
+    </div>
+
+    <div class="col-sm-4">
+        <h3> Dino-surowce</h3>
+        {{ form_row(editForm.materia.wood) }}
+        {{ form_row(editForm.materia.stone) }}
+        {{ form_row(editForm.materia.bone) }}
+        {{ form_row(editForm.materia.flint) }}
+        {{ form_row(editForm.materia.access) }}
+        {#&#123;&#35;<button id="save-user"  class="btn btn-warning btn-lg" style="border: none;">Edytuj</button>&#35;&#125;#}
+
+    </div>
+
+    <div class="col-sm-4">
+        <h3> Dino-umiejętności</h3>
+        {{ form_row(editForm.dino.health) }}
+        {{ form_row(editForm.dino.backup) }}
+        {{ form_row(editForm.dino.speed) }}
+        {{ form_row(editForm.dino.strength) }}
+
+    </div>
+    {{ form_end(editForm) }}
+
+
+</div>
+
+<script>
+
+    $(document).ready(function(){
+
+
+
+
+    });
+
+</script>

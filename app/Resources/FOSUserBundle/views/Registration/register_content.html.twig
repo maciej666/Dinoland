@@ -1,0 +1,411 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{#{% form_theme form 'bootstrap_3_layout.html.twig' %} #}
+{% form_theme form ':Form:bootstrap_3_cool.html.twig' %}
+{#------------------------------Pozwala dodać info na temat wpisywanych wartości do formularza----------------------#}
+{#-------Źródło: http://ajaxray.com/blog/symfony-forms-twitter-bootstrap-3-help-block/---------------------------------------------------------------------------------------------------------#}
+
+<script>
+    function clicker() {
+        document.getElementById("dino_table").style.display = "block";
+        var x = document.getElementById("fos_user_registration_form_age").value;
+        var y = document.getElementById("strength");
+        var z = document.getElementById("speed");
+        var q = document.getElementById("health");
+        var w = document.getElementById("backup");
+
+
+
+
+//        for (i = 1; i < 31; i++) {
+//            if (x == i) {
+//                y.value = 98 + (2 * i);
+//                z.value = 102 - (2 * i);
+//                q.value = 68 + i;
+//                w.value = 102 - i;
+//            }
+//        }
+
+        if(x==1){
+            y.innerHTML = 1;
+            z.innerHTML = 20;
+            q.innerHTML = 30;
+            w.innerHTML = 92;
+        }else if(x==2){
+            y.innerHTML = 2;
+            z.innerHTML = 19;
+            q.innerHTML = 32;
+            w.innerHTML = 90;
+        }else if(x==3){
+            y.innerHTML = 3;
+            z.innerHTML = 18;
+            q.innerHTML = 34;
+            w.innerHTML = 88;
+        }else if(x==4){
+            y.innerHTML = 4;
+            z.innerHTML = 17;
+            q.innerHTML = 36;
+            w.innerHTML = 86;
+        }else if(x==5){
+            y.innerHTML = 5;
+            z.innerHTML = 16;
+            q.innerHTML = 38;
+            w.innerHTML = 84;
+        }else if(x==6){
+            y.innerHTML = 6;
+            z.innerHTML = 15;
+            q.innerHTML = 40;
+            w.innerHTML = 82;
+        }else if(x==7){
+            y.innerHTML = 7;
+            z.innerHTML = 14;
+            q.innerHTML = 42;
+            w.innerHTML = 80;
+        }else if(x==8){
+            y.innerHTML = 8;
+            z.innerHTML = 13;
+            q.innerHTML = 44;
+            w.innerHTML = 78;
+        }else if(x==9){
+            y.innerHTML = 9;
+            z.innerHTML = 12;
+            q.innerHTML = 46;
+            w.innerHTML = 76;
+        }else if(x==10){
+            y.innerHTML = 10;
+            z.innerHTML = 11;
+            q.innerHTML = 48;
+            w.innerHTML = 74;
+        }else if(x==11){
+            y.innerHTML = 11;
+            z.innerHTML = 10;
+            q.innerHTML = 50;
+            w.innerHTML = 72;
+        }else if(x==12){
+            y.innerHTML = 12;
+            z.innerHTML = 9;
+            q.innerHTML = 52;
+            w.innerHTML = 70;
+        }else if(x==13){
+            y.innerHTML = 13;
+            z.innerHTML = 8;
+            q.innerHTML = 54;
+            w.innerHTML = 68;
+        }else if(x==14){
+            y.innerHTML = 14;
+            z.innerHTML = 7;
+            q.innerHTML = 56;
+            w.innerHTML = 66;
+        }else if(x==15){
+            y.innerHTML = 15;
+            z.innerHTML = 6;
+            q.innerHTML = 58;
+            w.innerHTML = 64;
+        }else if(x==16){
+            y.innerHTML = 16;
+            z.innerHTML = 5;
+            q.innerHTML = 60;
+            w.innerHTML = 62;
+        }else if(x==17){
+            y.innerHTML = 17;
+            z.innerHTML = 4;
+            q.innerHTML = 62;
+            w.innerHTML = 60;
+        }else if(x==18){
+            y.innerHTML = 18;
+            z.innerHTML = 3;
+            q.innerHTML = 64;
+            w.innerHTML = 58;
+        }else if(x==19){
+            y.innerHTML = 19;
+            z.innerHTML = 2;
+            q.innerHTML = 66;
+            w.innerHTML = 56;
+        }else if(x==20){
+            y.innerHTML = 20;
+            z.innerHTML = 1;
+            q.innerHTML = 68;
+            w.innerHTML = 54;
+        }else if(x==21){
+            y.innerHTML = 19;
+            z.innerHTML = 2;
+            q.innerHTML = 70;
+            w.innerHTML = 56;
+        }else if(x==22){
+            y.innerHTML = 18;
+            z.innerHTML = 3;
+            q.innerHTML = 72;
+            w.innerHTML = 54;
+        }else if(x==23){
+            y.innerHTML = 17;
+            z.innerHTML = 4;
+            q.innerHTML = 74;
+            w.innerHTML = 52;
+        }else if(x==24){
+            y.innerHTML = 16;
+            z.innerHTML = 5;
+            q.innerHTML = 76;
+            w.innerHTML = 50;
+        }else if(x==25){
+            y.innerHTML = 15;
+            z.innerHTML = 6;
+            q.innerHTML = 78;
+            w.innerHTML = 48;
+        }else if(x==26){
+            y.innerHTML = 14;
+            z.innerHTML = 7;
+            q.innerHTML = 80;
+            w.innerHTML = 46;
+        }else if(x==27){
+            y.innerHTML = 13;
+            z.innerHTML = 8;
+            q.innerHTML = 82;
+            w.innerHTML = 44;
+        }else if(x==28){
+            y.innerHTML = 12;
+            z.innerHTML = 9;
+            q.innerHTML = 84;
+            w.innerHTML = 42;
+        }else if(x==29){
+            y.innerHTML = 11;
+            z.innerHTML = 10;
+            q.innerHTML = 86;
+            w.innerHTML = 40;
+        }else if(x==30){
+            y.innerHTML = 10;
+            z.innerHTML = 11;
+            q.innerHTML = 88;
+            w.innerHTML = 38;
+        }
+
+    }
+
+        function showDino() {
+
+            var ss = document.getElementsByClassName("w");
+            var ul = document.getElementById("tag-div").getElementsByTagName("UL");
+            var foto = document.getElementsByName("dino");
+            var x = document.getElementById("fos_user_registration_form_species").value;
+            var i;
+
+
+            if (x == 'Stegozaur') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[0].style.display = "block";
+                ul[0].style.display = "block";
+            } else if (x == 'Triceratops') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[1].style.display = "block";
+                ul[1].style.display = "block";
+            } else if (x == 'Diplodok') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[2].style.display = "block";
+                ul[2].style.display = "block";
+            } else if (x == 'Brachiozaur') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[3].style.display = "block";
+                ul[3].style.display = "block";
+            } else if (x == 'Pteranodon') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[4].style.display = "block";
+                ul[4].style.display = "block";
+            } else if (x == 'Welociraptor') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[5].style.display = "block";
+                ul[5].style.display = "block";
+            } else if (x == 'Teropod') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[6].style.display = "block";
+                ul[6].style.display = "block";
+            } else if (x == 'Chirostenot') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[7].style.display = "block";
+                ul[7].style.display = "block";
+            } else if (x == 'Owiraptor') {
+                for (i = 0; i < 9; i++) {
+                    foto[i].style.display = "none";
+                    ss[i].style.display = "none";
+                }
+                foto[8].style.display = "block";
+                ul[8].style.display = "block";
+            }
+        }
+
+</script>
+
+
+
+<div class="container-fluid bg-grey">
+
+    <h2 style="margin-bottom: 10px; margin-top: 30px;">Postaw stopę na Dinopadole :) </h2>
+    <p style="margin-bottom: 0px;"> Dołącz do światka dinów, poznawaj nowe krainy, walcz, jedz, baw się, zdobywaj doświadczenie.</p>
+    <p style="margin-bottom: 10px;"> Nadszedł czas aby wykluć swojego Dinoida!</p>
+    <h3 style="margin-top: 7px; margin-bottom: 30px;">Podaj dane tresera i Dina śmiertelniku!</h3>
+
+    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+    {#{{     dump(form.age.vars)}}#}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.species, {'attr':{'onchange':'return showDino()'} }) }}
+
+
+    <div id="tag-div">
+
+        {#Info jak to zrobić przez php: http://stackoverflow.com/questions/18353055/php-twig-for-loop-to-build-html-divs#}
+        {#{% set paths = ['bundles/dino/images/Stegozaur.png', 'bundles/dino/images/Triceratops.png']  %}#}
+
+        {#{% for path in paths %}#}
+            {#<img src="{{ path }}" />#}
+        {#{% endfor %}#}
+
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Stegozaur.png')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+                <ul id="dino_table2" class ="w" style="display:none;">
+                    <li class="dino-info">Żył w mieszanych stadach </li>
+                    <li class="dino-info">Silne płyty i kolce </li>
+                    <li class="dino-info">Rozmiarem jak autobus </li>
+                </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino"  style="display:none;" src="{{ asset('bundles/dino/images/Triceratops.png')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4" id="dino-info2">
+                <ul id="dino_table2" class="w" style="display:none;" >
+                    <li class="dino-info">Posiada trzy groźne rogi </li>
+                    <li class="dino-info">Częsta ofiara tyranozaura </li>
+                    <li class="dino-info">Gatunek stadny </li>
+                </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Diplodok.jpg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Najdłuższy dinozaur (54m) </li>
+                <li class="dino-info">Koneser drzew paprotników i krzewów </li>
+                <li class="dino-info">Wąskie zaostrzone kolce na grzbiecie </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Brachiozaur.jpg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Wysoki, że hej</li>
+                <li class="dino-info">Jadał kamienie, aby lepiej trawić </li>
+                <li class="dino-info">Słabe zęby </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Pteranodon.jpeg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Żył w mieszanych stadach </li>
+                <li class="dino-info">Silne płyty i kolce </li>
+                <li class="dino-info">Rozmiarem jak autobus </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Welociraptor.jpeg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Żył w mieszanych stadach </li>
+                <li class="dino-info">Silne płyty i kolce </li>
+                <li class="dino-info">Rozmiarem jak autobus </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Teropod.jpeg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Żył w mieszanych stadach </li>
+                <li class="dino-info">Silne płyty i kolce </li>
+                <li class="dino-info">Rozmiarem jak autobus </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Chirostenot.gif')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Żył w mieszanych stadach </li>
+                <li class="dino-info">Silne płyty i kolce </li>
+                <li class="dino-info">Rozmiarem jak autobus </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" style="margin-left: 17%;">
+        <div class="col-sm-4 col-md-4">
+            <img id="dino-foto" name="dino" style="display:none;" src="{{ asset('bundles/dino/images/Owiraptor.jpeg')}}" alt="Dino">
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <ul id="dino_table2" class="w" style="display:none;">
+                <li class="dino-info">Żył w mieszanych stadach </li>
+                <li class="dino-info">Silne płyty i kolce </li>
+                <li class="dino-info">Rozmiarem jak autobus </li>
+            </ul>
+        </div>
+    </div>
+    </div>
+
+
+
+    {{ form_row(form.age, {'attr':{'onchange':'return clicker()'} }) }}
+    <ol id="dino_table">
+        <li class="dino-parameters">&nbsp;Siła (zdolność Dina do przenoszenia konarów i rozdzierania ofiar zębami):&nbsp;<span id="strength" style="color:black;"></span></li>
+        <li class="dino-parameters">&nbsp;Szybkość (bieg, wspinaczka i skradanie, szybkości nabieranie):&nbsp;<span id="speed" style="color:black;"></span></li>
+        <li class="dino-parameters">&nbsp;Zdrowie (predyspozycja do przyswajania witamin):&nbsp;<span id="health" style="color:black;"></span></li>
+        <li class="dino-parameters">&nbsp;Wsparcie (niektóre Diny nie zostawiają swoich na froncie):&nbsp;<span id="backup" style="color:black;"></span></li>
+    </ol>
+    {{ form_end(form) }}
+</div>
+
+
+
+
+

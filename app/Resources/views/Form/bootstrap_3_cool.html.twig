@@ -1,0 +1,18 @@
+{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{#------------------------------Pozwala dodać info na temat wpisywanych wartości do formularza----------------------#}
+
+    {% block form_help -%}
+        {% for attrname, attrvalue in attr %}
+            {% if attrname == 'data-help' %}
+                <span class="help-block" style="margin-bottom: 0px !important; color:black;">{{ attrvalue|trans }}</span>
+            {% endif %}
+        {% endfor %}
+    {%- endblock form_help %}
+
+    {% block form_errors -%}
+        {{ parent() }}
+        {{- block('form_help') -}}
+    {%- endblock form_errors %}
+
+{#---------Źródło: http://ajaxray.com/blog/symfony-forms-twitter-bootstrap-3-help-block/-------------------------------------------------------------------------------#}
