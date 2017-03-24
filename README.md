@@ -1,11 +1,8 @@
 Symfony Standard Edition
 ========================
-
-Po odpaleniu projektu trzeba załadować dane do bazy danych za pomocą komendy
-bin/console doctrine:fixtures:load
-
-Trzeba też ręcznie wykonać zapytanie SQL dla encji User z FOSUserBundle bo nie mogłem ustawić żeby się
-ładowało za pomocą fixtures. Także trzeba np. w phpmyadmin wykonac to zapytanie:
+Projekt zrobiony na szablonach bootstrapowych.
+Żeby zobaczyć działanie strony należy ją wypełnić danymi z bazy danych.
+Zatem należy w konsoli załadować fixtures i ręcznie wykonać zapytanie:
 
 INSERT INTO `fos_user` (`username`, `username_canonical`, `email`, `email_canonical`, `enabled`, `salt`, `password`, `last_login`, `confirmation_token`, `password_requested_at`, `roles`, `Name`, `Species`, `Age`, `dino_id`, `species_info_id`, `materia_id`) VALUES
 ('jedral90@tlen.pl', 'jedral90@tlen.pl', 'jedral90@tlen.pl', 'jedral90@tlen.pl', 1, 'nVpaLmHsR7yU/MhR.hkA7R6C5ZiNmRwRQa31bxTbDDk', 'b1cci5smlhMEYI7VycHvBUoy6kQ=', '2017-02-28 15:19:01', NULL, NULL, 'a:1:{i:0;s:10:"ROLE_ADMIN";}', 'Dinoid', 'Teropod', 14, 1, NULL, 1),
@@ -14,24 +11,22 @@ INSERT INTO `fos_user` (`username`, `username_canonical`, `email`, `email_canoni
 ('fren@tre.pl', 'fren@tre.pl', 'fren@tre.pl', 'fren@tre.pl', 0, 'F/cU7m3mHck/uO7Bk5OPbX5kGfbHgUAmjXlMOP27SCE', 'sUABHZJhrlxSlZ7JMujagbFJekY=', NULL, 'XlkLBAtkQ3Zxl_lLrTBL0RMmPeu4DKRY4jIWUxDNgaI', NULL, 'a:0:{}', 'Dopik', 'Brachiozaur', 26, 4, NULL, 4),
 ('wanda@re.com', 'wanda@re.com', 'wanda@re.com', 'wanda@re.com', 0, 'E9GAfoKYAfTizDVJi/7Nk50pMxkFsm4bDZ7iWzRXSTU', 'lTiobfUDQ56SQadTTixmR0TawRQ=', NULL, 'ABI884GTr97Wj2ergIBvfcdR1TfyufWjNNcxGNk8uRU', NULL, 'a:0:{}', 'Dynt', 'Welociraptor', 4, 5, NULL, 5);
 
-Nie jest tego dużo, starałem się zrobić "One Page Website", także nie ma za wielu ścieżek.
+(gdyż nie mogłem encji FOS'a wypełnić za pomocą fixtures :/)
 
-ścieżki dla ułatwienia to:
+Starałem się zrobić "onePageSite" także nie ma zbyt wielu ścieżek.
+Stronka umożliwia tworzenie własnego dinozaura (/register) któremu można przypisywać ptk. mocy i
+który gromadzi surowce pozwalające na wykup schronu dodającego bonusy (/dino_account).
+Zrobiłem też panel admina umożliwiający edycje usera, dina, jego surowców, ptk. mocy
+wraz z wyszukiwarką i możliwością sortowania(/admin/index - w zakładce Dino-konta).
+Zaczałem też robić RESTfull Api z testami jednostkowymi w oparciu o kurs z knpUniversity (DinoApiControllerTest.php).
+Strona nie jest jeszcze ukończona także zawiera parę mankamentów, jak np. konieczność podania hasła użytkownika
+przy zapisywaniu zmian do bazy daych w panelu admina, problem z przeniesieniem funkcji javascript
+do osobnego pliku (my-script-admin.js i myJavaScript.js),
+redundantny kod, zwłaszcza javascript... :)
+Miłego przeglądania.
 
-/
-/register
-/login
-/dino_account
-/admin/index (tutaj jest coś w zakładce Dino-konta)
-
-Konto admina to to z mailem jedral90@tlen.pl a hasło to qwe. Nie jest to dokończone, także zeby zapisać
-zmiany admina trzeba podać hasło użytkownika (dla każdego użytkownika hasło: qwe)
-
-Strone robiłem na bootstrap'owych szablonach.
-
-Pozdrawiam, Maciej Jędral
-
-What's inside?
+Pozdrawiam serdecznie,
+Maciej Jędral
 --------------
 
 The Symfony Standard Edition is configured with the following defaults:

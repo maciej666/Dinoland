@@ -202,9 +202,9 @@ class DinoApiControllerTest extends ApiTestCase
     {
         $data = array(
             'name' => 'Deliti',
-            'email' => 'NewApi@rest.pl',
+//            'email' => 'NewApi@rest.pl',
             'age' => 12,
-//            'species' => 'Welociraptor',
+            'species' => 'Welociraptor',
             'plainPassword' => 'qwe' //mało bezpieczne
         );
 
@@ -220,16 +220,60 @@ class DinoApiControllerTest extends ApiTestCase
             'title',
             'errors'
         ));
-        $this->asserter()->assertResponsePropertyExists($response, 'errors.species'); // sprawdza czy jest error pola health
+        $this->asserter()->assertResponsePropertyExists($response, 'errors.email'); // sprawdza czy jest error pola health
         $this->asserter()->assertResponsePropertyEquals(
             $response,
-            'errors.species[0]', //[0] boć może być wiele errorów dla jednej właściwości
-            'Każdy Dino należy do jakiegoś gatunku. Zmień to!'
+            'errors.email[0]', //[0] boć może być wiele errorów dla jednej właściwości
+            'Proszę podać adres email.'
         );
-        $this->asserter()->assertResponsePropertyDoesNotExist($response, 'errors.email');
+        $this->asserter()->assertResponsePropertyDoesNotExist($response, 'errors.age');
+    }
+
+    public function testnvalidJson()
+    {
+        $invalidJson = <<<EOF
+{
+            "health" : "3
+            "speed" : "23
+}
+EOF;
+        //1) POST to create parameters
+        $response = $this->client->post('api/dino/parameters', [
+            'body' => $invalidJson
+        ]);
+
+        //odc.7 course 2
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyContains(
+            $response,
+            'type',
+            'invalid_body_format'
+        );
     }
 
 
+    public function test404Exception()
+    {
+        $response = $this->client->post('api/fake');
+
+        $this->assertEquals(404, $response->getStatusCode()); // 404 - Not Found
+        $this->assertEquals('application/problem+json', $response->getHeader('Content-Type'));
+        $this->asserter()->assertResponsePropertyContains(
+            $response,
+            'type',
+            'about:blank' // według rekomendacji Scrap'a. Jeżeli kod (tu 404) mówi sam za siebie zostawiamy about:blank a w title standardowy opis słowny błedu 404(tu Not Found)
+        );
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'title',
+            'Not Found' // według rekomendacji Scrap'a. Jeżeli kod (tu 404) mówi sam za siebie zostawiamy about:blank a w title opis słowny 404(tu Not Found)
+        );
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'detail', //komunikat zrozumiały dla użytkownika strony
+            'No route found for "POST /api/fake"'
+        );
+    }
 
 
 

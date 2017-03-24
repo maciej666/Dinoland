@@ -14,13 +14,6 @@ class AcmeListener
 
 public function onFooAction(Event $event)
 {
-    $test = new Test();
 
-    $test->setName('Boban');
-    $test->setAge(11);
-
-    $em = $this->getDoctrine()->getManager();
-    $em->persist($test);
-    $em->flush();
 }
 }

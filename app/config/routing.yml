@@ -51,6 +51,8 @@ add_user_dino_api:
     resource: "@AddUserDinoBundle/Controller/Api"
     type:     annotation
     prefix:   /
+    defaults:
+        _format: json
 
 admin:
     resource: "@AdminBundle/Controller/"

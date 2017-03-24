@@ -316,14 +316,13 @@
         <!-- end navbar side -->
         <!--  page-wrapper -->
         <div id="page-wrapper">
-        {% include 'AdminBundle:Panel:dashboard.html.twig' %}
+            {% include 'AdminBundle:Panel:dashboard.html.twig' %}
         </div>
         <!-- end page-wrapper -->
-
     </div>
     <!-- end wrapper -->
-    {% block javascript %}
     <!-- Core Scripts - Include with every page -->
+
     <script src="{{ asset('bundles/admin/plugins/jquery-1.10.2.js') }}"></script>
     <script src="{{ asset('bundles/admin/plugins/bootstrap/bootstrap.min.js') }}"></script>
     <script src="{{ asset('bundles/admin/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
@@ -336,7 +335,34 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{{ asset('bundles/admin/scripts/my-script-admin.js') }}"></script>
-    {% endblock %}
+
+    <script>
+        //Po kliknięciu w opcje z sidebar-menu zmienia sie zawartość div'a o id="page-wrapper"
+        $('.admin-menu').on('click', function(e)
+        {
+            e.preventDefault();
+            var clickedMenu = $(this).data('menu');
+
+            //zmienia klase select kliknietej opcji menu
+            $('.selected').removeClass('selected');
+            $(this).addClass('selected');
+
+            $.post(clickedMenu,
+
+                    function (response) {
+                        if (response.code == 100 && response.success) {
+
+                            var parsedData =JSON.parse(response.content);
+                            var wrapper = $("#page-wrapper");
+                            wrapper.empty();
+                            wrapper.html(parsedData);
+
+                        } else {
+                            alert('Odśwież stronę');
+                        }
+                    }, "json");
+        });
+    </script>
 </body>
 
 </html>

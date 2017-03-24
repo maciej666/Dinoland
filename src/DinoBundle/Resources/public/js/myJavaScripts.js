@@ -261,10 +261,11 @@ $(document).ready(function() {
                         document.getElementById("info").style.display = "block";
 
                         var display = $('#ile');
+                        //timer odliczający 1 dzień do następnego rozdania ptk. mocy
                         startTimer(86400, display);
 
-                        //co godzine wysyła zapytanie czy można wyświetlić przycisk do edycji parametrów
-                        setInterval(checkTime, 3600000);
+                        //co 15 minut wysyła zapytanie czy można wyświetlić przycisk do edycji parametrów
+                        setInterval(checkTime, 900000);
 
                         document.getElementById("sum").innerHTML = '0';
                         document.getElementById("dino_button").style.display = "none";
@@ -303,6 +304,7 @@ $(document).ready(function() {
                     document.getElementById("dino_button").style.display = "block";
                     document.getElementById("info").style.display = "none";
                 } else {
+                    //jeżeli odpowiednio dużo czasu nie upłyneło ustawiany jest znowu timer odliczający pozostały czas
                     var time_to_update = $('#time_to_update').data('time');
                     var display = $('#ile');
                     startTimer(time_to_update, display);

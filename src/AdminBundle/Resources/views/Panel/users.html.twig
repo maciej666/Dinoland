@@ -1,4 +1,4 @@
- <div class="row">
+            <div class="row">
                 <!--page header-->
                 <div class="col-lg-12">
                     <h1 class="page-header">Dino użytkownicy - admin <span id="qwe"> </span></h1>
@@ -27,11 +27,7 @@
                             </div>
 
                             <div class="table-responsive" id="tabello">
-
-
                                     {% include 'AdminBundle:Panel:tabello.html.twig' %}
-
-
                             </div>
                             <div id="edit-dino-form" >
 
@@ -43,48 +39,35 @@
                 </div>
             </div>
             <!-- end row -->
+<script>
+    //Funkcja wyszukuje tekstu w tabeli users.
+    $("input[type=text][name=show-result]").keyup(function(){
 
+        //wartość wpisanego tekstu w polu szukaj
+        var search = $(this).val();
+        //sprawdza które filtry są zaznaczone
+        var email =  $('#email').is(':checked');
+        var name =  $('#name').is(':checked');
+        var age =  $('#age').is(':checked');
+        var species =  $('#species').is(':checked');
 
-            {#<script>#}
-                {#$(document).ready(function(){#}
+        $.post('http://www.dino.dev/app_dev.php/admin/ajax_show_search ',
+                {
+                    search: search,
+                    email: email ? 1 : 0, //tak dziwacznie gdyż miałem problem z przekazaniem wartości bollowskiej za pomocą XMLHttpRequest
+                    name: name ? 1 : 0,
+                    age: age ? 1 : 0,
+                    species: species ? 1 : 0
+                },
+                function (response) {
+                    if (response.code == 200 && response.success) {
 
-                    {#//funkcja wyszukuje tekstu w tabeli users#}
-                    {#$("input[type=text][name=show-result]").keyup(function(){#}
-
-                        {#//wartość wpisanego tekstu w polu szukaj#}
-                        {#var search = $(this).val();#}
-
-                        {#//sprawdza które filtry są zaznaczone#}
-
-
-                        {#var email =  $('#email').is(':checked');#}
-                        {#var name =  $('#name').is(':checked');#}
-                        {#var age =  $('#age').is(':checked');#}
-                        {#var species =  $('#species').is(':checked');#}
-
-                        {#$.post('{{path('Show_result_of_admin_search')}}',#}
-                                {#{#}
-                                    {#search: search,#}
-                                    {#email: email ? 1 : 0,#}
-                                    {#name: name ? 1 : 0,#}
-                                    {#age: age ? 1 : 0,#}
-                                    {#species: species ? 1 : 0#}
-                                {#},#}
-                                {#function (response) {#}
-                                    {#if (response.code == 200 && response.success) {#}
-
-                                        {#var parsedData =JSON.parse(response.content);#}
-                                        {#var wrapper = $("#tabello");#}
-                                        {#wrapper.empty();#}
-                                        {#wrapper.html(parsedData);#}
-
-                                    {#} else {#}
-
-                                    {#}#}
-
-                                {#}, "json");#}
-
-                    {#});#}
-
-                {#});#}
-            {#</script>#}
+                        var parsedData =JSON.parse(response.content);
+                        var wrapper = $("#tabello");
+                        wrapper.empty();
+                        wrapper.html(parsedData);
+                    } else {
+                    }
+                }, "json");
+    });
+</script>

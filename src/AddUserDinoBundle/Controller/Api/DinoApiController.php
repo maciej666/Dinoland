@@ -2,6 +2,7 @@
 
 namespace AddUserDinoBundle\Controller\Api;
 
+use AddUserDinoBundle\Api\ApiProblemException;
 use AddUserDinoBundle\Entity\DinoParameters;
 use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -15,6 +16,8 @@ use AddUserDinoBundle\Form\DinoType;
 use AddUserDinoBundle\Entity\User;
 use Symfony\Component\Form\FormInterface;
 use AddUserDinoBundle\Api\ApiProblem;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use AddUserDinoBundle\Services;
 
 class DinoApiController extends Controller
 {
@@ -34,21 +37,21 @@ class DinoApiController extends Controller
             ->encodePassword($user, $data['plainPassword']);
         $user->setPassword($pass); //mało bezpieczne, boć user przesyła niezaszyfrowane hasło
         $user->setEnabled(true); //ustawiam true gdyż nie ma aktywacji za pomocą confirmation_token
+//        var_dump($pass);die;
         $form = $this->createForm(DinoType::class, $user, array(
             'csrf_protection' => false
         ));
 
         $this->processForm($request, $form);
-//            header('Content-Type: cli');//co by łądnie błąd wywalić w konsolecie:)
-//            dump((string) $form->getErrors(true, false ));die;
+
         if(!$form->isValid()){
-            return $this->createValidationErrorResponse($form);
+            $this->throwApiProblemValidationException($form);
         }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
         $em->flush();
-//            var_dump($user);die;
+
         $location = $this->generateUrl('api_show_dino',[
             'dino' => 'dalina'
         ]);
@@ -118,7 +121,7 @@ class DinoApiController extends Controller
         $this->processForm($request, $form);
 
         if(!$form->isValid()){
-            return $this->createValidationErrorResponse($form);
+            $this->throwApiProblemValidationException($form);
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -177,7 +180,7 @@ class DinoApiController extends Controller
         if(!$form->isValid()){
 //            header('Content-Type: cli');//co by łądnie błąd wywalić w konsolecie:)
 //            dump((string) $form->getErrors(true, false ));die;
-            return $this->createValidationErrorResponse($form);
+            $this->throwApiProblemValidationException($form);
         }
 
         $em->persist($parameters);
@@ -203,6 +206,17 @@ class DinoApiController extends Controller
         $body = $request->getContent();
         //Decodowanie do array'a; true sprawia że otrzymamy array nie object
         $data = json_decode($body, true);
+        //jeżeli przesłaliśmy źle sforamtowanego json'a, json_decode zwraca null
+        //wyrzucamy błąd odc. 8,9 course 2
+        if($data === null){
+            $apiProblem = new ApiProblem(
+                400,
+                ApiProblem::INVALID_REQUEST_BODY_FORMAT
+                );
+            //aby przerwać działanie w metodzie proccessForm nie można dać poprostu return'a ?!?!
+            //patrz: AddUserDinoBundle/Api/ApiProblemException
+            throw new ApiProblemException($apiProblem);
+        }
 
         $clearMissing = $request->getMethod() != 'PATCH'; //potrzebne gdyż używamy disabled w formType. Bez tego gdy używammy PATCH'a do update'a wstawia null w pola których nie chcemy zaktualizować.
         $form->submit($data, $clearMissing); //submit to funkcja która jest wywoływana w handleRequest
@@ -263,23 +277,17 @@ class DinoApiController extends Controller
      * @param FormInterface $form
      * @return JsonResponse
      */
-    public function createValidationErrorResponse(FormInterface $form)
+    public function throwApiProblemValidationException(FormInterface $form)
     {
         $errors = $this->getErrorsFromForm($form);
 
-        //
         $apiProblem = new ApiProblem(
             400,
-            'dino_validation_error',
-            'Wprowadzono niepoprawne dane'
+            ApiProblem::TYPE_DINO_VALIDATION_ERROR
         );
         $apiProblem->set('errors', $errors);
 
-
-        $response = new  JsonResponse($apiProblem->toArray(), $apiProblem->getStatusCode());
-        $response->headers->set('Content-Type', 'application/problem+json');
-
-        return $response;
+        throw new ApiProblemException($apiProblem);
     }
 
 

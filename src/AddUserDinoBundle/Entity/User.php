@@ -60,8 +60,8 @@ class User extends BaseUser
      * @var string
      *
      * @ORM\Column(name="Species", type="string", length=255)
-     * @Serializer\Expose()
      * @Assert\NotBlank(message="Każdy Dino należy do jakiegoś gatunku. Zmień to!")
+     * @Serializer\Expose()
      * @Assert\Length(
      *      max = 200,
      *      groups={"Registration", "Profile"}

@@ -94,6 +94,7 @@ class DinoAdminType extends AbstractType
                     'data_class' => 'AddUserDinoBundle\Entity\DinoMaterials')
             )
             ->remove('username')
+//            ->remove('plainPassword')
         ;
     }
 

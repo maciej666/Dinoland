@@ -135,14 +135,14 @@ class DinoManager
         $unix_time_pass += $interval->h * 3600;
         $unix_time_pass += $interval->i * 60;
         $unix_time_pass += $interval->s;
-        $unix_time_left = 86400 - $unix_time_pass;
+        $in_sec_time_left = 86400 - $unix_time_pass;
 
         if($date11 < $date1){
 
             return null;
         }else{
 
-            return $unix_time_left;
+            return $in_sec_time_left;
         }
     }
 

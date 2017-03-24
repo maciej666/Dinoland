@@ -46,7 +46,6 @@ class PanelController extends Controller
             "edited" => false//tymczasowe średnie rozwiązanie, sprawdza czy był edytowany jakiś user patrz saveUserAction
         ))->getContent();
         $content = json_encode($template);
-
         $response = new JsonResponse();
         $response->setData(array(
             "code" => 100, //200 z jakiegoś powodu nie działa??
@@ -57,6 +56,7 @@ class PanelController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+
     }
 
 
@@ -79,6 +79,7 @@ class PanelController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
+
     }
 
 
@@ -131,8 +132,8 @@ class PanelController extends Controller
      * Wyszukiwarka fraz przeszukująca encje User
      * @param Request $request
      */
-    public function searchAction(Request $request){
-
+    public function searchAction(Request $request)
+    {
         $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:User');
 
         //wartość wpisanego tekstu
@@ -145,23 +146,22 @@ class PanelController extends Controller
         $species = $request->request->get('species');
 
         $checked_filters = [];
-
-        //dla wszystkich randomowo u.disabled - dziwne to tak
-        //nie wiem jak zrobić inaczej
-        for($i = 0; $i < 4; $i++){
+        //dla wszystkich randomowo u.enabled(info o aktywacji konta; 1 v 0) - dziwne to tak
+        //nie wiem jak zrobić inaczej.
+        for ($i = 0; $i < 4; $i++) {
             $checked_filters[$i] = 'u.enabled';
         }
         //tworzy tablice z filtrami
-        if($email == 1){
+        if ($email == 1) {
             $checked_filters[0] = 'u.email';
         }
-        if($name == 1){
+        if ($name == 1) {
             $checked_filters[1] = 'u.name';
         }
-        if($age == 1){
+        if ($age == 1) {
             $checked_filters[2] = 'u.age';
         }
-        if($species == 1){
+        if ($species == 1) {
             $checked_filters[3] = 'u.species';
         }
 
@@ -191,13 +191,12 @@ class PanelController extends Controller
      * @return JsonResponse
      *
      */
-    public function editUsersAction(Request $request){
-
+    public function editUsersAction(Request $request)
+    {
         $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:User');
         $id = $request->request->get('id');
 //-----------Tworzenie formularza dla usera wraz z surowcami i statystykami-----------------
         $user = $repository->findUserById($id);
-        $materials = $user->getMateria();
         $editForm = $this->createAdminForm($user, DinoAdminType::class, $id);
 
         //renderowanie widoku formularza
@@ -219,43 +218,28 @@ class PanelController extends Controller
     }
 
     /**
-     * @return JsonResponse
      * Zapisuje zmiany wprowadzone na obiekcie user
+     * @return JsonResponse
      */
     public function saveUsersAction(Request $request, $id)
     {
-//        var_dump($request->getContent());die;
         if (!$request->isXmlHttpRequest()) {
             return new JsonResponse(array('message' => 'You can access this only using Ajax!'), 400);
         }
 
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository('AddUserDinoBundle:User');
-
         $user = $repository->find($id);
-        $materials = $user->getMateria();
-        $pass = $user->getPassword();
 
-//        $encoder = new MessageDigestPasswordEncoder('sha1');
-//        $password = $encoder->encodePassword($pass,  $user->getSalt());
-
-//        var_dump($password);die;
         $editForm = $this->createAdminForm($user, DinoAdminType::class, $id);
-
-//        $data = $request->request->get('data');
-//        $editForm->setData($data);
-//                        var_dump($editForm->get('plainPassword')->getData());die;
-//        var_dump($editForm->handleRequest($request));die;
         $editForm->handleRequest($request);
-//dump($editForm->handleRequest($request));die;
+        //ponowne zapiywanie starego hasła!!!?
+        $pass = $user->getPassword();
+        $pass = $this->container->get('security.password_encoder')
+            ->encodePassword($user, $pass);
+        $user->setPassword($pass);
 
-
-
-        //generowanie widoku tabello.html.twig i przekazanie doń obiektów users z
-        //klasy User
         $users = $repository->findAll();
-
-        $response = new JsonResponse();
 
         if ($editForm->isValid()) {
 
@@ -269,6 +253,7 @@ class PanelController extends Controller
             ))->getContent();
             $content = json_encode($template);
 
+            $response = new JsonResponse();
             $response->setData(array(
                 "code" => 200,
                 "success" => true,
@@ -279,6 +264,7 @@ class PanelController extends Controller
             return $response;
         }
 
+        //Gdy formularz nie przechodzi walidacji wyświetlany jest ponownie wraz z błędami
         $template = $this->render('AdminBundle:Panel:editUserForm.html.twig', array(
             'users' => $users,
             'user' => $user, //edytowany user
@@ -287,7 +273,7 @@ class PanelController extends Controller
         ))->getContent();
         $content = json_encode($template);
 
-
+        $response = new JsonResponse();
         $response->setData(array(
             "code" => 400,
             "success" => false,
@@ -299,6 +285,14 @@ class PanelController extends Controller
 
     }
 
+
+    /**
+     * Tworzenie akcji na podstawie encji, odpowiedniego formularza i id edytowanego usera
+     * @param $entity
+     * @param $form
+     * @param int $id
+     * @return \Symfony\Component\Form\Form
+     */
     public function createAdminForm($entity, $form, $id=0){
 
         return $this->createForm($form, $entity, array(

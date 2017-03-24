@@ -16,7 +16,7 @@ class AjaxController extends Controller
 {
 
     /**
-     * Sprawdza czy upłynął czas po jakim user może przyznać punkty i jeśli może to zapisuje je do bazy danych
+     * Sprawdza czy upłynął czas po jakim user może przyznać punkty i jeśli można to zapisuje je do bazy danych
      *
      * Źródło jak działa ajax z symfony: http://stackoverflow.com/questions/13584591/how-to-integrate-ajax-with-symfony2
      * @param Request $request
@@ -31,10 +31,11 @@ class AjaxController extends Controller
         $dinoId = $dinoParameters->getId();
         $user_dino = $em->getRepository('AddUserDinoBundle:DinoParameters')->findOneById($dinoId);
 
+        //sprawdza czy upłynał czas potrzebny do update'a
         $updated = $this->container->get('dinoManager')->checkUpdate($user);
         $left = $this->container->get('dinoManager')->timeToUpdate($user);
-        $response = new JsonResponse();
 
+        //suma ptk. mocy z bazy danych
         $old_sum = $user_dino->getHealth() + $user_dino->getStrength() + $user_dino->getBackup() + $user_dino->getSpeed();
 
         $health = $request->request->get('health', '50');
@@ -42,13 +43,14 @@ class AjaxController extends Controller
         $backup = $request->request->get('backup', '50');
         $strength = $request->request->get('strength', '50');
 
+        //suma ptk. mocy z edytowanych pól za pomocą javascript
         $new_sum = $health + $speed + $backup + $strength;
 
         $diff = $new_sum - $old_sum;
 
+        $response = new JsonResponse();
         //Sprawdz czy są dodawane dokładnie 2ptk i czy upłynał odpowiedni czas od ostatniej akcji.
         if ($updated && $diff == 2) {
-
             $dinoParameters->setStrength($strength);
             $dinoParameters->setSpeed($speed);
             $dinoParameters->setHealth($health);
@@ -69,7 +71,6 @@ class AjaxController extends Controller
             return $response;
 
         } else {
-
             $response->setData(array(
                 "code" => 100,
                 "success" => false
@@ -78,6 +79,7 @@ class AjaxController extends Controller
             return $response;
         }
     }
+
 
     /**
      * Funkcja która jest wykonywana co minutę i wysyła czas po którym można rozdać punkty
@@ -92,7 +94,6 @@ class AjaxController extends Controller
         $response = new JsonResponse();
         //Jeśli null czas upłynał wyświetl guzik i liczbe punktów do rozdania
         if ($updated == null) {
-
             $response->setData(array(
                 "code" => 100,
                 "success" => true
@@ -101,7 +102,6 @@ class AjaxController extends Controller
             return $response;
 
         } else {
-
             $response->setData(array(
                 "code" => 100,
                 "success" => false,
@@ -111,10 +111,7 @@ class AjaxController extends Controller
             return $response;
 
         }
-
     }
-
-
 
 
     /**
@@ -126,7 +123,6 @@ class AjaxController extends Controller
      */
     public function materialAjaxAction()
     {
-
         $logged_user = $this->getUser();
         $dino_materials = $this->container->get('dinoManager')->showMaterials($logged_user);
 
@@ -140,7 +136,6 @@ class AjaxController extends Controller
 
         //Jeśli zwrócono obiekt
         if ($dino_materials) {
-
             $response->setData(array(
                 "code" => 100,
                 "success" => true,
@@ -154,7 +149,6 @@ class AjaxController extends Controller
             return $response;
 
         } else {
-
             $response->setData(array(
                 "code" => 100,
                 "success" => false,
@@ -163,7 +157,6 @@ class AjaxController extends Controller
             return $response;
 
         }
-
     }
 
 
@@ -174,8 +167,8 @@ class AjaxController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function addHomeAjaxAction(Request $request){
-
+    public function addHomeAjaxAction(Request $request)
+    {
         $logged_user = $this->getUser();
         $dinoMaterialsId = $logged_user->getMateria()->getId();
         $em = $this->getDoctrine()->getManager();
@@ -198,48 +191,48 @@ class AjaxController extends Controller
         $allowed = $request->request->get('access');
 
         //Jeśli jakimś cudem user przycisnął guzik którego nie powinien móc kliknąć
-        if(!$allowed == $access){
+        if (!$allowed == $access) {
             throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
         }
         // W if switch'a sprawdza dla pewności czy user ma wystarczającą ilość surowca
         // w przypadku gdyby mógł nacisnąć przycisk bez wystarczającej ilości surowca
         // wywala go gdy można kliknąc pare razy ajax request o schronisko
-        switch($allowed) {
+        switch ($allowed) {
             case 0:
-                if($requirements[0] == 0){
+                if ($requirements[0] == 0) {
                     $dino_materials->setWood($wood-60);
                     $dino_materials->setStone($stone-40);
                     $dino_materials->setBone($bone-15);
                     $dino_materials->setFlint($flint-6);
                     $dino_materials->setAccess(1);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 1:
-                if($requirements[1] == 1 && $access == 1){
+                if ($requirements[1] == 1 && $access == 1) {
                     $dino_materials->setWood($wood-120);
                     $dino_materials->setStone($stone-90);
                     $dino_materials->setBone($bone-40);
                     $dino_materials->setFlint($flint-25);
                     $dino_materials->setAccess(2);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 2:
-                if($requirements[2] == 2 && $access == 2){
+                if ($requirements[2] == 2 && $access == 2) {
                     $dino_materials->setWood($wood-250);
                     $dino_materials->setStone($stone-170);
                     $dino_materials->setBone($bone-100);
                     $dino_materials->setFlint($flint-40);
                     $dino_materials->setAccess(3);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 3:
-                if($requirements[3] == 3 && $access == 3){
+                if ($requirements[3] == 3 && $access == 3) {
                     $dino_materials->setWood($wood-340);
                     $dino_materials->setStone($stone-200);
                     $dino_materials->setBone($bone-130);
@@ -250,46 +243,46 @@ class AjaxController extends Controller
                 }
                 break;
             case 4:
-                if($requirements[4] == 4 && $access == 4){
+                if ($requirements[4] == 4 && $access == 4) {
                     $dino_materials->setWood($wood-400);
                     $dino_materials->setStone($stone-320);
                     $dino_materials->setBone($bone-290);
                     $dino_materials->setFlint($flint-150);
                     $dino_materials->setAccess(5);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 5:
-                if($requirements[5] == 5 && $access == 5){
+                if ($requirements[5] == 5 && $access == 5) {
                     $dino_materials->setWood($wood-560);
                     $dino_materials->setStone($stone-400);
                     $dino_materials->setBone($bone-310);
                     $dino_materials->setFlint($flint-170);
                     $dino_materials->setAccess(6);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 6:
-                if($requirements[6] == 6 && $access == 6){
+                if ($requirements[6] == 6 && $access == 6) {
                     $dino_materials->setWood($wood-900);
                     $dino_materials->setStone($stone-790);
                     $dino_materials->setBone($bone-650);
                     $dino_materials->setFlint($flint-400);
                     $dino_materials->setAccess(7);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
             case 7:
-                if($requirements[7] == 7 && $access == 7){
+                if ($requirements[7] == 7 && $access == 7) {
                     $dino_materials->setWood($wood-1100);
                     $dino_materials->setStone($stone-850);
                     $dino_materials->setBone($bone-740);
                     $dino_materials->setFlint($flint-500);
                     $dino_materials->setAccess(8);
-                }else{
+                } else {
                     throw new NotFoundHttpException("Coś poszło nie tak odśwież stronę:)");
                 }
                 break;
@@ -314,10 +307,6 @@ class AjaxController extends Controller
         return $response;
 
     }
-
-
-
-
 }
 
 

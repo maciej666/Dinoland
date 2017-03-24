@@ -12,3 +12,9 @@ services:
         class: AddUserDinoBundle\Form\DinoType
         tags:
             - { name: form.type, alias: app_user_registration }
+
+    api_problem_subscriber:
+        class: AddUserDinoBundle\EventListener\ApiExceptionsSubscriber
+        arguments: [%kernel.debug%]
+        tags:
+            - {name: kernel.event_subscriber}

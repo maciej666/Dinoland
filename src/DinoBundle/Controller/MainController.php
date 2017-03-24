@@ -15,35 +15,33 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class MainController extends Controller
 {
     /**
+     * Wyświetla stronę główną
      * @Route("/", name="main")
-     *
      * @Template
      */
     public function mainPageAction()
     {
-
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
         }
         $logged_user = $this->getUser();
         $dino_parameters = $logged_user->getDino();
 
-
         return array(
             'logged_user' => $logged_user,
             'dino_parameters' => $dino_parameters,
         );
-
     }
 
+
     /**
+     * Wyświetla stronę z kontem Dina
      * @Route("/dino_account", name="dino_account")
      * @return array
      * @Template
      */
-    public function showDinoAction(){
-
-
+    public function showDinoAction()
+    {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
         }
