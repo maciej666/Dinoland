@@ -2,24 +2,18 @@
 
 namespace AddUserDinoBundle\Controller\Api;
 
-use AddUserDinoBundle\Api\ApiProblemException;
 use AddUserDinoBundle\Entity\DinoParameters;
-use JMS\Serializer\SerializationContext;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use AddUserDinoBundle\Form\DinoParametersType;
 use AddUserDinoBundle\Form\DinoType;
 use AddUserDinoBundle\Entity\User;
-use Symfony\Component\Form\FormInterface;
-use AddUserDinoBundle\Api\ApiProblem;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use AddUserDinoBundle\Services;
 
-class DinoApiController extends Controller
+class DinoApiController extends BaseController
 {
     /**
      * Tworzy Usera w oparciu o przekazane dane
@@ -28,6 +22,8 @@ class DinoApiController extends Controller
      */
     public function createAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $user = new User();
 
         $body = $request->getContent();
@@ -53,7 +49,7 @@ class DinoApiController extends Controller
         $em->flush();
 
         $location = $this->generateUrl('api_show_dino',[
-            'dino' => 'dalina'
+            'email' => 'dalina'
         ]);
         $response = $this->createApiResponse($user, 201);
         $response->headers->set('Location', $location); //przekierowanie
@@ -64,18 +60,20 @@ class DinoApiController extends Controller
 
     /**
      * Przekazuje usera po mailu
-     * @Route("api/dino/{dino}", name="api_show_dino")
+     * @Route("api/dino/{email}", name="api_show_dino")
      * @Method("GET")
      */
-    public function showAction($dino)
+    public function showAction($email)
     {
         $dino = $this->getDoctrine()
             ->getRepository('AddUserDinoBundle:User')
-            ->findOneByEmail($dino);
+            ->findOneByEmail($email);
+//        var_dump($dino->getDino());die;
 
         if(!$dino) {
-            throw $this->createNotFoundException('Nie ma takiego Dina '.$dino);
+            throw $this->createNotFoundException('Nie ma takiego Dina '.$email);
         }
+
         $response = $this->createApiResponse($dino);
 
         return $response;
@@ -84,17 +82,22 @@ class DinoApiController extends Controller
 
     /**
      * Przekazuje wszystkich userów
-     * @Route("api/dino")
+     * Korzysta z WhiteOctoberPagerfantaBundle, odc. 2 course 3
+     * @Route("api/dino", name="api_users_collection")
      * @Method("GET")
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        $dinos = $this->getDoctrine()
-            ->getRepository('AddUserDinoBundle:User')
-            ->findAll();
+        $filter = $request->query->get('filter');
 
-        $data = ['users' => $dinos];
-        $response = $this->createApiResponse($data);
+        $qb = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:User')
+            ->findAllQueryBuilder($filter);
+
+        $paginatedCollection = $this->get('pagination_factory')
+            ->createCollection($qb, $request, 'api_users_collection');
+
+        $response = $this->createApiResponse($paginatedCollection);
 
         return $response;
     }
@@ -187,112 +190,13 @@ class DinoApiController extends Controller
         $em->flush();
 
         $location = $this->generateUrl('api_show_dino',[
-            'dino' => 'dalina'
+            'email' => 'dalina'
         ]);
         $response = $this->createApiResponse($parameters, 201);
         $response->headers->set('Location', $location); //przekierowanie
 
         return $response;
     }
-
-
-    /**
-     * Metoda pobiera dane z Requesta i zapisuje je przy pomocy formularza
-     * @param Request $request
-     * @param $form
-     */
-    public function processForm(Request $request, $form)
-    {
-        $body = $request->getContent();
-        //Decodowanie do array'a; true sprawia że otrzymamy array nie object
-        $data = json_decode($body, true);
-        //jeżeli przesłaliśmy źle sforamtowanego json'a, json_decode zwraca null
-        //wyrzucamy błąd odc. 8,9 course 2
-        if($data === null){
-            $apiProblem = new ApiProblem(
-                400,
-                ApiProblem::INVALID_REQUEST_BODY_FORMAT
-                );
-            //aby przerwać działanie w metodzie proccessForm nie można dać poprostu return'a ?!?!
-            //patrz: AddUserDinoBundle/Api/ApiProblemException
-            throw new ApiProblemException($apiProblem);
-        }
-
-        $clearMissing = $request->getMethod() != 'PATCH'; //potrzebne gdyż używamy disabled w formType. Bez tego gdy używammy PATCH'a do update'a wstawia null w pola których nie chcemy zaktualizować.
-        $form->submit($data, $clearMissing); //submit to funkcja która jest wywoływana w handleRequest
-    }
-
-
-    public function createApiResponse($data, $statusCode = 200)
-    {
-        $json = $this->serialize($data);
-
-        return new Response($json, $statusCode, [
-           'Content-Type' => 'application/json'
-        ]);
-    }
-
-
-    /**
-     * Korzysta z JMSSerializerBundle
-     * @param User $dino
-     * @return array
-     */
-    private function serialize($data)
-    {
-        //Kiedy wartość zwracanego pola to null, serializer nie uwzględnia go wogóle i nie przesyła np. 'health' => null. Stąd poniższe linie. Patrz odc. 20 course 1.
-        $context = new SerializationContext();
-        $context->setSerializeNull(true);
-
-        return $this->container->get('jms_serializer')
-            ->serialize($data, 'json', $context);
-    }
-
-
-    /**
-     * Zwraca błedy jakie się pojawiły podczas walidacji
-     * Knp University odc. 1-2? course 2
-     * @param FormInterface $form
-     * @return array
-     */
-    private function getErrorsFromForm(FormInterface $form)
-    {
-        $errors = array();
-        foreach ($form->getErrors() as $error) {
-            $errors[] = $error->getMessage();
-        }
-        foreach ($form->all() as $childForm) {
-            if ($childForm instanceof FormInterface) {
-                if ($childErrors = $this->getErrorsFromForm($childForm)) {
-                    $errors[$childForm->getName()] = $childErrors;
-                }
-            }
-        }
-        return $errors;
-    }
-
-
-    /**
-     * Zwraca JsonResponse wraz z błędami
-     * @param FormInterface $form
-     * @return JsonResponse
-     */
-    public function throwApiProblemValidationException(FormInterface $form)
-    {
-        $errors = $this->getErrorsFromForm($form);
-
-        $apiProblem = new ApiProblem(
-            400,
-            ApiProblem::TYPE_DINO_VALIDATION_ERROR
-        );
-        $apiProblem->set('errors', $errors);
-
-        throw new ApiProblemException($apiProblem);
-    }
-
-
-
-
 
 
 

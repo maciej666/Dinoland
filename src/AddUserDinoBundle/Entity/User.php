@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation as Serializer; //odc. 20 course 1 Jeżli brak @Serializer\Expose() to pole nie jest wysyłane w JsonResponse
+use AddUserDinoBundle\Annotation\Link; //patrz odc. 8 course 3 o towrzeniu własnych adnotacji
 
 /**
  * Encja rozszerza Encję FosUserBundle
@@ -25,6 +26,11 @@ use JMS\Serializer\Annotation as Serializer; //odc. 20 course 1 Jeżli brak @Ser
  *      column=@ORM\Column(name="salt", type="string", nullable=true)
  *      )
  *  })
+ * @Link(
+ *  "self",
+ *  route = "api_show_dino",
+ *  params = { "email" : "object.getEmail()" }
+ * )
  */
 class User extends BaseUser
 {
@@ -88,6 +94,8 @@ class User extends BaseUser
      * @ORM\OneToOne(targetEntity="AddUserDinoBundle\Entity\DinoParameters", inversedBy="user")
      * @ORM\JoinColumn(name="dino_id", referencedColumnName="id")
      * @Serializer\Expose()
+     * odc.10 course 3
+     * @Serializer\Groups({"deep"})
      */
     private $dino;
 

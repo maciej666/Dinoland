@@ -1,0 +1,21 @@
+{% extends 'DinoBundle::base.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+<div class="container-fluid bg-grey" >
+    <div class="row text-center right" style="text-align: center; margin-top: 15px;">
+        <h1>Post creation</h1>
+
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <input type="submit" value="Create" />
+        {{ form_end(form) }}
+
+        <ul>
+            <li>
+                <a href="{{ path('blog_post_index') }}">Back to the list</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

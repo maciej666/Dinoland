@@ -1,0 +1,27 @@
+{% extends 'DinoBundle::base.html.twig' %}
+{% form_theme edit_form 'bootstrap_3_layout.html.twig' %}
+{% form_theme delete_form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+<div class="container-fluid bg-grey" >
+    <div class="row text-center right" style="text-align: center; margin-top: 15px;">
+        <h1>Post edit</h1>
+
+        {{ form_start(edit_form) }}
+            {{ form_widget(edit_form) }}
+            <input type="submit" value="Edit" />
+        {{ form_end(edit_form) }}
+
+        <ul>
+            <li>
+                <a href="{{ path('blog_post_index') }}">Back to the list</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -37,6 +37,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
 
 
     /**
+     * Do poprawy!!! Zrób jak findAllQueryBuilder
      * Szuka pól pasujących do przekazanej frazy
      * uwzględniając filtr po którym ma wyszukiwać
      *
@@ -83,6 +84,19 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+
+    public function findAllQueryBuilder($filter = '')
+    {
+        $qb =  $this->createQueryBuilder('user');
+
+        if ($filter) {
+            $qb->andWhere('user.email LIKE :filter')
+                ->setParameter('filter', '%'.$filter.'%');
+        }
+
+        return $qb;
     }
 
 }

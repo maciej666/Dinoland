@@ -288,7 +288,7 @@ class ApiTestCase extends KernelTestCase
      * Tworzy DinoParameters w relacji do istniejącego Usera
      * @param array $data
      */
-    protected function createParameters(array $data)
+    protected function createParameters(array $data, $email = 'ApiMail@ty.pl')
     {
         //skleja dwie tablice
         $data = array_merge(array(
@@ -309,7 +309,7 @@ class ApiTestCase extends KernelTestCase
         //tworzenie relacji
         $user = $this->getEntityManager()
             ->getRepository('AddUserDinoBundle:User')
-            ->findOneByEmail('ApiMail@ty.pl');
+            ->findOneByEmail($email);
         $user->setDino($parameters);
 
         $this->getEntityManager()->persist($parameters);
@@ -329,5 +329,17 @@ class ApiTestCase extends KernelTestCase
         }
 
         return $this->responseAsserter;
+    }
+
+
+    /**
+     * Poprzedza uri /app_test.php na potrzeby testów
+     * boć poprzedza też w setUpBeforeClass() przy tworzeniu klienta
+     * @param $uri
+     * @return string
+     */
+    public function adjustUri($uri)
+    {
+        return '/app_test.php'.$uri;
     }
 }

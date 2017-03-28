@@ -57,9 +57,16 @@ class DinoApiControllerTest extends ApiTestCase
             'plainPassword' => 'qwe' //mało bezpieczne
         );
 
+        //tworzenie tokena do autoryzacji
+        $token = $this->getService('lexik_jwt_authentication.encoder')
+            ->encode(['username' => 'ApiMail@ty.pl']); //tworzy nowego usera w oparciu o token starego test:/
+
         //1) POST to create user
         $response = $this->client->post('api/dino', [
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => 'Bearer '.$token
+            ]
         ]);
 
         //testy jednostkowe
@@ -71,17 +78,11 @@ class DinoApiControllerTest extends ApiTestCase
         $this->assertEquals('DinApi', $data['name']);
     }
 
-    /**
-     *
-     */
+
     public function testGETUser()
     {
-        $this->createParameters(array(
-            'health' => 13
-        ));
-
         //GET to get user
-        $response = $this->client->get('api/dino/ApiMail@ty.pl');
+        $response = $this->client->get('api/dino/ApiMail@ty.pl'); //ApiMail@ty.pl user tworzony przy każdym teście
 
         //poniższy kod korzysta z klasy ReponseAsserter
         $this->asserter()->assertResponsePropertiesExist($response, array(
@@ -89,6 +90,10 @@ class DinoApiControllerTest extends ApiTestCase
             'email',
         ));
         $this->asserter()->assertResponsePropertyEquals($response, 'email', 'ApiMail@ty.pl');
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            '_links.self',
+            $this->adjustUri('/api/dino/ApiMail@ty.pl')); //sprawdza czy każdy User ma link do samego siebie, odc. 6 course 3
     }
 
 
@@ -101,9 +106,9 @@ class DinoApiControllerTest extends ApiTestCase
         $response = $this->client->get('api/dino');
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->asserter()->assertResponsePropertyIsArray($response, 'users');
-        $this->asserter()->assertResponsePropertyCount($response, 'users', 3); // 3 to liczba userów, dwaj stworzeni powyżej i jeden przy każdym teście
-        $this->asserter()->assertResponsePropertyEquals($response, 'users[2].email', 'Apility@ty.pl');
+        $this->asserter()->assertResponsePropertyIsArray($response, 'items');
+        $this->asserter()->assertResponsePropertyCount($response, 'items', 3); // 3 to liczba userów, dwaj stworzeni powyżej i jeden przy każdym teście
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[2].email', 'Apility@ty.pl');
     }
 
 
@@ -276,9 +281,70 @@ EOF;
     }
 
 
+    public function testGETUsersCollectionPaginated()
+    {
+        $this->createUser('NotMatchingEmail@wp.pl');
+        for ($i = 0; $i < 30; $i++) {
+            $this->createUser('Apilianator'.$i.'@ty.pl');
+        }
+
+        //GET to get all users
+        $response = $this->client->get('api/dino?filter=Apilianator');
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertResponsePropertyExists($response, 'items');
+        $this->assertResponsePropertyExists($response, '_links');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[5].email', 'Apilianator5@ty.pl');
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
+        $this->asserter()->assertResponsePropertyEquals($response, 'total', 30); // +1 tworzony przy każdym teście, jak odpalono filtr to już nie ma +1
+        $this->asserter()->assertResponsePropertyExists($response, '_links.next'); //linki do następnych stron; _links.next oznacza że next jest osadzony w _links (tak gdyż linki nie dotyczą bezpośrednio usera)
+
+        $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
+        $response = $this->client->get($nextUrl);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[5].email', 'Apilianator15@ty.pl');
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
+
+        $lastUrl = $this->asserter()->readResponseProperty($response, '_links.last');
+        $response = $this->client->get($lastUrl);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[0].email', 'Apilianator20@ty.pl');
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
+        $this->asserter()->assertResponsePropertyDoesNotExist($response, 'items[10].email');
+    }
+
+
+    public function testGETUserDeep()
+    {
+        $user = $this->createUser('ApiRalation@ty.pl');
+        $data = array();
+        $parameters = $this->createParameters($data, 'ApiRalation@ty.pl');
+        $user->setDino($parameters);
+
+        //Jeżeli deep = 1 chcemy zwrócić obiekt user'a wraz z wszelkimi obiektami które pozostają do niego w relacji
+        $response = $this->client->get('api/dino/ApiRalation@ty.pl?deep=1'); //grupa deep sprawdzana w metodzie serialize() DinoApiController a tworzona w encji User
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyExists(
+            $response,
+            'dino.speed' //dino to parametry dina
+        );
+    }
+
+
+//    public function testRequiresAuthentication()
+//    {
+//        $response = $this->client->post('api/dino', [
+//            'body' => '[]'
+//        ]);
+//        $this->assertEquals(401, $response->getStatusCode());//401 - unauthorized
+//
+//    }
 
 
 
 
 
-}
+
+
+    }
