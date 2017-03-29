@@ -2,54 +2,63 @@
 
 namespace AddUserDinoBundle\Tests\Controller\Blog;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use AddUserDinoBundle\Test\ApiTestCase;
 
-class PostControllerTest extends WebTestCase
+class PostControllerTest extends ApiTestCase
 {
-    /*
-    public function testCompleteScenario()
+    /** To co w funkcji setup, wykonuje się przy każdym odpaleniu testu */
+    public function setup()
     {
-        // Create a new client to browse the application
-        $client = static::createClient();
+        parent::setup();
 
-        // Create a new entry in the database
-        $crawler = $client->request('GET', '/blog_post/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /blog_post/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
-
-        // Fill in the form and submit it
-        $form = $crawler->selectButton('Create')->form(array(
-            'adduserdinobundle_blog_post[field_name]'  => 'Test',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
-
-        // Edit the entity
-        $crawler = $client->click($crawler->selectLink('Edit')->link());
-
-        $form = $crawler->selectButton('Update')->form(array(
-            'adduserdinobundle_blog_post[field_name]'  => 'Foo',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
-
-        // Delete the entity
-        $client->submit($crawler->selectButton('Delete')->form());
-        $crawler = $client->followRedirect();
-
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        $this->createUser('ApiMail@ty.pl');
     }
 
-    */
+
+    public function testPOSTNew()
+    {
+        //dane do stworzenia posta
+        $data = array(
+            'title' => 'Post stworzony przy pomocy API',
+            'body' => 'Należy się uwierzytelnić aby dodać posta',
+        );
+
+        //tworzenie tokena do autoryzacji; normalnie musimy otrzymać go od aplikacji
+        $token = $this->getService('lexik_jwt_authentication.encoder')
+            ->encode(['username' => 'ApiMail@ty.pl']); //tworzy token z nazwą usera który jest tworzony przy każdym teście
+
+        $response = $this->client->post('api/new/post', [
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
+
+        //testy jednostkowe
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertTrue($response->hasHeader('Location'));
+        $finishedData = json_decode($response->getBody(), true);
+        $this->assertEquals('/app_test.php/blog/post/'.$finishedData['id'],$response->getHeader('Location'));
+        $this->assertArrayHasKey('title', $finishedData); //sprawdza czy array ma klucz health
+        $this->assertEquals('Post stworzony przy pomocy API', $data['title']);
+    }
+
+
+//    public function testGETPost()
+//    {
+//        //GET to get user
+//        $response = $this->client->get('api/post/{id}/ApiMail@ty.pl'); //ApiMail@ty.pl user tworzony przy każdym teście
+//
+//        //poniższy kod korzysta z klasy ReponseAsserter
+//        $this->asserter()->assertResponsePropertiesExist($response, array(
+//            'name',
+//            'email',
+//        ));
+//        $this->asserter()->assertResponsePropertyEquals($response, 'email', 'ApiMail@ty.pl');
+//        $this->asserter()->assertResponsePropertyEquals(
+//            $response,
+//            '_links.self',
+//            $this->adjustUri('/api/dino/ApiMail@ty.pl')); //sprawdza czy każdy User ma link do samego siebie, odc. 6 course 3
+//    }
+
 }

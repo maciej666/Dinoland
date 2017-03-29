@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation as Serializer; //odc. 20 course 1 Jeżli brak @Serializer\Expose() to pole nie jest wysyłane w JsonResponse
 use AddUserDinoBundle\Annotation\Link; //patrz odc. 8 course 3 o towrzeniu własnych adnotacji
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * Encja rozszerza Encję FosUserBundle
@@ -110,6 +112,12 @@ class User extends BaseUser
     private $materia;
 
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AddUserDinoBundle\Entity\Blog\Post", mappedBy="user", cascade={"remove"})
+     */
+    private $posts;
 
 
     public function __construct()
@@ -257,7 +265,21 @@ class User extends BaseUser
         return $this->materia;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
 
+    /**
+     * @param ArrayCollection $posts
+     */
+    public function setPosts($posts)
+    {
+        $this->posts = $posts;
+    }
 
 
 }

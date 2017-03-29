@@ -5,6 +5,7 @@ namespace AddUserDinoBundle\Controller\Api;
 use AddUserDinoBundle\Entity\DinoParameters;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AddUserDinoBundle\Form\DinoParametersType;
@@ -13,6 +14,11 @@ use AddUserDinoBundle\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use AddUserDinoBundle\Services;
 
+/**
+ * Class DinoApiController
+ * @package AddUserDinoBundle\Controller\Api
+ * @Security("is_granted('ROLE_USER')")
+ */
 class DinoApiController extends BaseController
 {
     /**
@@ -22,8 +28,6 @@ class DinoApiController extends BaseController
      */
     public function createAction(Request $request)
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
         $user = new User();
 
         $body = $request->getContent();

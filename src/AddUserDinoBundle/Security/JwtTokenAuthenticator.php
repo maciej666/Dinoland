@@ -5,6 +5,7 @@ namespace AddUserDinoBundle\Security;
 use Doctrine\ORM\EntityManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator; //symfonowy authenticator
 
-/** Patrz odc. 07 course 4 */
+/** Podobna klasa znajduje się w bandlu lexik jwt ver. 2.0; Patrz odc. 07 course 4 */
 class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 {
     /**
@@ -47,6 +48,7 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
         $token = $extractor->extract($request);
 
+        //zaprzestanie autentykacji za pomocą tej metody
         if (!$token) {
             return null;
         }
@@ -87,18 +89,22 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        //Tu nic boć chcemy aby dalej wykonywał się kod z controllera
     }
 
 
     public function supportsRememberMe()
     {
-        return false; //nie dotyczy nas
+        return false; //nie dotyczy api
     }
 
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // TODO: Implement start() method.
+        //Gdy nie wyślemy nagłówka Authentication nie chcemy aby przekierowało usera do strony z loginem
+        return new JsonResponse([
+            'error' => 'Wymagana autoryzacja'
+        ], 401);
     }
 
 

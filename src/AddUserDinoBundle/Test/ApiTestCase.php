@@ -342,4 +342,16 @@ class ApiTestCase extends KernelTestCase
     {
         return '/app_test.php'.$uri;
     }
+
+
+    protected function getAuthorizedHeaders($username, $headers = array())
+    {
+        //tworzenie tokena do autoryzacji
+        $token = $this->getService('lexik_jwt_authentication.encoder')
+            ->encode(['username' => $username]); //tworzy nowego usera w oparciu o token starego test:/
+
+        $headers['Authorization'] = 'Bearer '.$token;
+
+        return $headers;
+    }
 }

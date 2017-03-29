@@ -1,23 +1,26 @@
 <?php
 
-namespace AddUserDinoBundle\Controller\Blog;
+namespace AddUserDinoBundle\Controller\Api;
 
 use AddUserDinoBundle\Entity\Blog\Post;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AddUserDinoBundle\Form\Blog\PostType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Post controller.
- *
- * @Route("blog")
+ * Security umożliwia uwierzytelnienie wszystkich zasobów klasy
+ * @Security("is_granted('ROLE_USER')")
+ * @Route("api")
  */
-class PostController extends Controller
+class PostApiController extends BaseController
 {
     /**
      * Lists all post entities.
      *
-     * @Route("/posts", name="blog_post_index")
+     * @Route("/posts", name="api_blog_post_index")
      * @Method("GET")
      */
     public function indexAction()
@@ -34,35 +37,52 @@ class PostController extends Controller
     /**
      * Creates a new post entity.
      *
-     * @Route("/new/post", name="blog_post_new")
+     * @Route("/new/post", name="api_blog_post_new")
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
     {
-        $Session = $this->get('session');
-        $post = new Post();
-        $form = $this->createForm('AddUserDinoBundle\Form\Blog\PostType', $post);
-        $form->handleRequest($request);
+        //wystarczy getUser gdyż user jest zlogowany na czas wykonywania controller'a
+        $user = $this->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $post->setCreatedAt(new \DateTime());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($post);
-            $em->flush();
-            $Session->getFlashBag()->add('success', 'Stworzono post :)');
-            return $this->redirectToRoute('blog_post_show', array('id' => $post->getId()));
+        //Na wszelki wypadek sprawdzenie czy podany user istnieje
+        if(!$user) {
+            throw $this->createNotFoundException('Such an email or pass does not exist');
         }
 
-        return $this->render('blog/post/new.html.twig', array(
-            'post' => $post,
-            'form' => $form->createView(),
+        $post = new Post();
+        $post->setUser($user);
+
+        $form = $this->createForm(PostType::class, $post, array(
+            'csrf_protection' => false
         ));
+        $this->processForm($request, $form);
+
+        //sprawdzenie poprawności przesłanych danych
+        if(!$form->isValid()){
+            $this->throwApiProblemValidationException($form);
+        }
+
+        $post->setCreatedAt(new \DateTime());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($post);
+        $em->flush();
+
+        //przekierowanie z url do strony na której możemy zobaczyć nowo stworzonego posta
+        $location = $this->generateUrl('blog_post_show',[
+            'id' => $post->getId()
+        ]);
+
+        $response = $this->createApiResponse($post, 201);
+        $response->headers->set('Location', $location); //przekierowanie
+
+        return $response;
     }
 
     /**
      * Finds and displays a post entity.
      *
-     * @Route("/post/{id}", name="blog_post_show")
+     * @Route("/post/{id}", name="api_blog_post_show")
      * @Method("GET")
      */
     public function showAction(Post $post)
@@ -78,7 +98,7 @@ class PostController extends Controller
     /**
      * Displays a form to edit an existing post entity.
      *
-     * @Route("/post/{id}/edit", name="blog_post_edit")
+     * @Route("/post/{id}/edit", name="api_blog_post_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Post $post)
@@ -104,7 +124,7 @@ class PostController extends Controller
     /**
      * Deletes a post entity.
      *
-     * @Route("/post/{id}", name="blog_post_delete")
+     * @Route("/post/{id}", name="api_blog_post_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Post $post)
@@ -136,6 +156,6 @@ class PostController extends Controller
             ->setAction($this->generateUrl('blog_post_delete', array('id' => $post->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }

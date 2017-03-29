@@ -12,7 +12,6 @@ class DinoApiControllerTest extends ApiTestCase
 {
     /**
      * To co w funkcji setup, wykonuje się przy każdym odpaleniu testu
-     * jak odpalamy test
      */
     public function setup()
     {
@@ -34,7 +33,10 @@ class DinoApiControllerTest extends ApiTestCase
 
         //1) POST to create parameters
         $response = $this->client->post('api/dino/parameters', [
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ]);
 
         //testy jednostkowe
@@ -57,15 +59,11 @@ class DinoApiControllerTest extends ApiTestCase
             'plainPassword' => 'qwe' //mało bezpieczne
         );
 
-        //tworzenie tokena do autoryzacji
-        $token = $this->getService('lexik_jwt_authentication.encoder')
-            ->encode(['username' => 'ApiMail@ty.pl']); //tworzy nowego usera w oparciu o token starego test:/
-
         //1) POST to create user
         $response = $this->client->post('api/dino', [
             'body' => json_encode($data),
             'headers' => [
-                'Authorization' => 'Bearer '.$token
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
             ]
         ]);
 
@@ -82,7 +80,11 @@ class DinoApiControllerTest extends ApiTestCase
     public function testGETUser()
     {
         //GET to get user
-        $response = $this->client->get('api/dino/ApiMail@ty.pl'); //ApiMail@ty.pl user tworzony przy każdym teście
+        $response = $this->client->get('api/dino/ApiMail@ty.pl', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]); //ApiMail@ty.pl user tworzony przy każdym teście
 
         //poniższy kod korzysta z klasy ReponseAsserter
         $this->asserter()->assertResponsePropertiesExist($response, array(
@@ -103,7 +105,11 @@ class DinoApiControllerTest extends ApiTestCase
         $this->createUser('Apility@ty.pl');
 
         //GET to get all users
-        $response = $this->client->get('api/dino');
+        $response = $this->client->get('api/dino', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
@@ -128,7 +134,10 @@ class DinoApiControllerTest extends ApiTestCase
 
         //PUT to update(replece) user
         $response = $this->client->put('api/dino/Apiniati@ty.pl', array(
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ));
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -143,7 +152,11 @@ class DinoApiControllerTest extends ApiTestCase
         $this->createUser('Apikola@wp.pl');
 
         //DELETE to delete user
-        $response = $this->client->delete('api/dino/Apikola@wp.pl');
+        $response = $this->client->delete('api/dino/Apikola@wp.pl', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
 
         $this->assertEquals(204, $response->getStatusCode()); //204 - success but without any content back
     }
@@ -160,7 +173,10 @@ class DinoApiControllerTest extends ApiTestCase
 
         //PATCH to update field in user
         $response = $this->client->patch('api/dino/Apiniati@ty.pl', array(
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ));
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -183,7 +199,10 @@ class DinoApiControllerTest extends ApiTestCase
 
         //1) POST to create parameters
         $response = $this->client->post('api/dino/parameters', [
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ]);
 
         //testy jednostkowe, odc.1 course 2
@@ -203,6 +222,8 @@ class DinoApiControllerTest extends ApiTestCase
         $this->assertEquals('application/problem+json', $response->getHeader('Content-Type'));
     }
 
+
+    /** Nie działa gdyż POST sprawdza token - do poprawy !!!!!*/
     public function testUserPOSTErrors()
     {
         $data = array(
@@ -215,7 +236,10 @@ class DinoApiControllerTest extends ApiTestCase
 
         //1) POST to create user
         $response = $this->client->post('api/dino', [
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ]);
 
         //testy jednostkowe, odc.1 course 2
@@ -244,7 +268,10 @@ class DinoApiControllerTest extends ApiTestCase
 EOF;
         //1) POST to create parameters
         $response = $this->client->post('api/dino/parameters', [
-            'body' => $invalidJson
+            'body' => $invalidJson,
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
         ]);
 
         //odc.7 course 2
@@ -259,7 +286,11 @@ EOF;
 
     public function test404Exception()
     {
-        $response = $this->client->post('api/fake');
+        $response = $this->client->post('api/fake',[
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
 
         $this->assertEquals(404, $response->getStatusCode()); // 404 - Not Found
         $this->assertEquals('application/problem+json', $response->getHeader('Content-Type'));
@@ -289,7 +320,11 @@ EOF;
         }
 
         //GET to get all users
-        $response = $this->client->get('api/dino?filter=Apilianator');
+        $response = $this->client->get('api/dino?filter=Apilianator', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertResponsePropertyExists($response, 'items');
@@ -300,13 +335,21 @@ EOF;
         $this->asserter()->assertResponsePropertyExists($response, '_links.next'); //linki do następnych stron; _links.next oznacza że next jest osadzony w _links (tak gdyż linki nie dotyczą bezpośrednio usera)
 
         $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
-        $response = $this->client->get($nextUrl);
+        $response = $this->client->get($nextUrl, [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyEquals($response, 'items[5].email', 'Apilianator15@ty.pl');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
 
         $lastUrl = $this->asserter()->readResponseProperty($response, '_links.last');
-        $response = $this->client->get($lastUrl);
+        $response = $this->client->get($lastUrl, [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyEquals($response, 'items[0].email', 'Apilianator20@ty.pl');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
@@ -322,7 +365,11 @@ EOF;
         $user->setDino($parameters);
 
         //Jeżeli deep = 1 chcemy zwrócić obiekt user'a wraz z wszelkimi obiektami które pozostają do niego w relacji
-        $response = $this->client->get('api/dino/ApiRalation@ty.pl?deep=1'); //grupa deep sprawdzana w metodzie serialize() DinoApiController a tworzona w encji User
+        $response = $this->client->get('api/dino/ApiRalation@ty.pl?deep=1', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]); //grupa deep sprawdzana w metodzie serialize() DinoApiController a tworzona w encji User
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyExists(
@@ -332,14 +379,14 @@ EOF;
     }
 
 
-//    public function testRequiresAuthentication()
-//    {
-//        $response = $this->client->post('api/dino', [
-//            'body' => '[]'
-//        ]);
-//        $this->assertEquals(401, $response->getStatusCode());//401 - unauthorized
-//
-//    }
+    public function testRequiresAuthentication()
+    {
+        $response = $this->client->post('api/dino', [
+            'body' => '[]'
+        ]);
+        $this->assertEquals(401, $response->getStatusCode());//401 - unauthorized
+
+    }
 
 
 

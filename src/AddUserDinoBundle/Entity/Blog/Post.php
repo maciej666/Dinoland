@@ -3,7 +3,10 @@
 namespace AddUserDinoBundle\Entity\Blog;
 
 use AddUserDinoBundle\Entity\Timestampable;
+use AddUserDinoBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * Post
@@ -24,18 +27,26 @@ class Post extends Timestampable
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank(message="Proszę podać tytuł")
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="body", type="string", length=4000)
+     * @Assert\NotBlank(message="Proszę coś napisać")
+     * @ORM\Column(name="body", type="text")
      */
     private $body;
 
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AddUserDinoBundle\Entity\User", inversedBy="posts")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @Assert\NotBlank(message="Nie ma posta bez autora")
+     */
+    private $user;
 
     /**
      * Get id
@@ -93,6 +104,22 @@ class Post extends Timestampable
     public function getBody()
     {
         return $this->body;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
     }
 }
 
