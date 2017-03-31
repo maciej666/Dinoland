@@ -41,6 +41,7 @@ class PostController extends Controller
     {
         $Session = $this->get('session');
         $post = new Post();
+        $post->setUser($this->getUser());
         $form = $this->createForm('AddUserDinoBundle\Form\Blog\PostType', $post);
         $form->handleRequest($request);
 

@@ -314,6 +314,7 @@ EOF;
 
     public function testGETUsersCollectionPaginated()
     {
+        //tworzenei wielu userów aby przetestować paginację
         $this->createUser('NotMatchingEmail@wp.pl');
         for ($i = 0; $i < 30; $i++) {
             $this->createUser('Apilianator'.$i.'@ty.pl');
@@ -334,7 +335,7 @@ EOF;
         $this->asserter()->assertResponsePropertyEquals($response, 'total', 30); // +1 tworzony przy każdym teście, jak odpalono filtr to już nie ma +1
         $this->asserter()->assertResponsePropertyExists($response, '_links.next'); //linki do następnych stron; _links.next oznacza że next jest osadzony w _links (tak gdyż linki nie dotyczą bezpośrednio usera)
 
-        $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
+        $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next'); //pobiera link to następnej podstrony i wykonuje poniżej kolejnego requesta
         $response = $this->client->get($nextUrl, [
             'headers' => [
                 'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
@@ -383,15 +384,22 @@ EOF;
     {
         $response = $this->client->post('api/dino', [
             'body' => '[]'
+            //brakuje nagłówka
         ]);
         $this->assertEquals(401, $response->getStatusCode());//401 - unauthorized
-
     }
 
 
-
-
-
-
+    public function testBADToken()
+    {
+        $response = $this->client->post('api/dino', [
+            'body' => '[]',
+            'headers' => [
+                'Authorization' => 'Berer WRONG'
+            ]
+        ]);
+        $this->assertEquals(401, $response->getStatusCode());//401 - unauthorized
+        $this->assertEquals('application/problem+json', $response->getHeader('Content-Type'));
+    }
 
     }

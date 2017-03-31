@@ -2,6 +2,8 @@
 
 namespace AddUserDinoBundle\Security;
 
+use AddUserDinoBundle\Api\ApiProblem;
+use AddUserDinoBundle\Api\ResponseFactory;
 use Doctrine\ORM\EntityManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
@@ -28,13 +30,18 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
      * @var EntityManager
      */
     private $em;
+    /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
 
 
-    public function __construct(JWTEncoderInterface $jwtEncoder, EntityManager $em)
+    public function __construct(JWTEncoderInterface $jwtEncoder, EntityManager $em, ResponseFactory $responseFactory)
     {
 
         $this->jwtEncoder = $jwtEncoder;
         $this->em = $em;
+        $this->responseFactory = $responseFactory;
     }
 
     /** Metody odpalają się jedna za drugą */
@@ -83,7 +90,11 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        // TODO: Implement onAuthenticationFailure() method.
+        // getUser nie zwróci Usera gdy skończyła się ważność Tokena, bądź gdy jakimś cudem nie ma usera w bazie danych
+        $apiProblem = new ApiProblem(401);
+        $apiProblem->set('detail', $exception->getMessageKey());
+
+        return $this->responseFactory->createResponse($apiProblem);
     }
 
 
@@ -101,10 +112,14 @@ class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        //Gdy nie wyślemy nagłówka Authentication nie chcemy aby przekierowało usera do strony z loginem
-        return new JsonResponse([
-            'error' => 'Wymagana autoryzacja'
-        ], 401);
+        //Wywala błąd gdy nie wyślemy poprawnego nagłówka authorization
+        $apiProblem = new ApiProblem(401);
+
+        //W przypadku gdy nie ma żadnego info o błedzie
+        $message = $authException ? $authException->getMessageKey() : 'Missing credentials';
+        $apiProblem->set('detail', $message);
+
+        return $this->responseFactory->createResponse($apiProblem);
     }
 
 

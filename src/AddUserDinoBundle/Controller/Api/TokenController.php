@@ -31,6 +31,7 @@ class TokenController extends BaseController
         $isValid = $this->get('security.password_encoder')
             ->isPasswordValid($user, $request->getPassword());
 
+        //gdy nie przechodzi testu to odpalany jest JwtTokenAutnenticator
         if (!$isValid) {
             throw new BadCredentialsException();
         }

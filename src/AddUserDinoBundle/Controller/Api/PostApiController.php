@@ -38,7 +38,7 @@ class PostApiController extends BaseController
      * Creates a new post entity.
      *
      * @Route("/new/post", name="api_blog_post_new")
-     * @Method({"GET", "POST"})
+     * @Method("POST")
      */
     public function newAction(Request $request)
     {
@@ -79,6 +79,7 @@ class PostApiController extends BaseController
         return $response;
     }
 
+
     /**
      * Finds and displays a post entity.
      *
@@ -95,11 +96,12 @@ class PostApiController extends BaseController
         ));
     }
 
+
     /**
      * Displays a form to edit an existing post entity.
      *
      * @Route("/post/{id}/edit", name="api_blog_post_edit")
-     * @Method({"GET", "POST"})
+     * @Method("POST")
      */
     public function editAction(Request $request, Post $post)
     {
@@ -120,6 +122,7 @@ class PostApiController extends BaseController
             'delete_form' => $deleteForm->createView(),
         ));
     }
+
 
     /**
      * Deletes a post entity.
@@ -142,6 +145,7 @@ class PostApiController extends BaseController
 
         return $this->redirectToRoute('blog_post_index');
     }
+
 
     /**
      * Creates a form to delete a post entity.

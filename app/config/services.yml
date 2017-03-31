@@ -15,7 +15,7 @@ services:
 
     api_problem_subscriber:
         class: AddUserDinoBundle\EventListener\ApiExceptionsSubscriber
-        arguments: [%kernel.debug%]
+        arguments: ['%kernel.debug%', '@api.response_factory']
         tags:
             - {name: kernel.event_subscriber}
 
@@ -32,3 +32,6 @@ services:
     jwt_token_authenticator:
         class: AddUserDinoBundle\Security\JwtTokenAuthenticator
         autowire: true #zgaduje argumenty z automatu
+
+    api.response_factory:
+        class: AddUserDinoBundle\Api\ResponseFactory

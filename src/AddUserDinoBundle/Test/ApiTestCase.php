@@ -343,7 +343,12 @@ class ApiTestCase extends KernelTestCase
         return '/app_test.php'.$uri;
     }
 
-
+    /**
+     * Tworzy token na potrzeby testów
+     * @param $username
+     * @param array $headers
+     * @return array
+     */
     protected function getAuthorizedHeaders($username, $headers = array())
     {
         //tworzenie tokena do autoryzacji

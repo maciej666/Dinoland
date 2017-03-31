@@ -22,7 +22,7 @@ class TokenControllerTest extends ApiTestCase
     }
 
 
-    public function testPOSTInvalidCredential()
+    public function testPOSTInvalidPasswordCredential()
     {
         $this->createUser('ApiToken2@wp.pl', 'secretPass666');
 
@@ -31,6 +31,22 @@ class TokenControllerTest extends ApiTestCase
         ]);
 
         $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('application/problem+json', $response->getHeader('Content-Type'));
+        $this->asserter()->assertResponsePropertyContains(
+            $response,
+            'type',
+            'about:blank'
+        );
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'title',
+            'Unauthorized'
+        );
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'detail', //komunikat zrozumiały dla użytkownika strony
+            'Invalid credentials.' //Tekst wywalany przez BadCredentialsException()
+        );
     }
 
 }

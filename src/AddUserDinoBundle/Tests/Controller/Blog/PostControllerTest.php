@@ -23,10 +23,6 @@ class PostControllerTest extends ApiTestCase
             'body' => 'Należy się uwierzytelnić aby dodać posta',
         );
 
-        //tworzenie tokena do autoryzacji; normalnie musimy otrzymać go od aplikacji
-        $token = $this->getService('lexik_jwt_authentication.encoder')
-            ->encode(['username' => 'ApiMail@ty.pl']); //tworzy token z nazwą usera który jest tworzony przy każdym teście
-
         $response = $this->client->post('api/new/post', [
             'body' => json_encode($data),
             'headers' => [
@@ -44,21 +40,24 @@ class PostControllerTest extends ApiTestCase
     }
 
 
-//    public function testGETPost()
-//    {
-//        //GET to get user
-//        $response = $this->client->get('api/post/{id}/ApiMail@ty.pl'); //ApiMail@ty.pl user tworzony przy każdym teście
-//
-//        //poniższy kod korzysta z klasy ReponseAsserter
-//        $this->asserter()->assertResponsePropertiesExist($response, array(
-//            'name',
-//            'email',
-//        ));
-//        $this->asserter()->assertResponsePropertyEquals($response, 'email', 'ApiMail@ty.pl');
-//        $this->asserter()->assertResponsePropertyEquals(
-//            $response,
-//            '_links.self',
-//            $this->adjustUri('/api/dino/ApiMail@ty.pl')); //sprawdza czy każdy User ma link do samego siebie, odc. 6 course 3
-//    }
+    public function testGETPost()
+    {
+        $response = $this->client->get('api/post/{id}', [
+            'headers' => [
+                'Authorization' => $this->getAuthorizedHeaders('ApiMail@ty.pl')
+            ]
+        ]);
+
+        //poniższy kod korzysta z klasy ReponseAsserter
+        $this->asserter()->assertResponsePropertiesExist($response, array(
+            'name',
+            'email',
+        ));
+        $this->asserter()->assertResponsePropertyEquals($response, 'email', 'ApiMail@ty.pl');
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            '_links.self',
+            $this->adjustUri('/api/dino/ApiMail@ty.pl')); //sprawdza czy każdy User ma link do samego siebie, odc. 6 course 3
+    }
 
 }

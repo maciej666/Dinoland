@@ -4,20 +4,37 @@ namespace AddUserDinoBundle\EventListener;
 
 use AddUserDinoBundle\Api\ApiProblem;
 use AddUserDinoBundle\Api\ApiProblemException;
+use AddUserDinoBundle\Api\ResponseFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+
+/**
+ * Łapie wszystkie exceptions i zamienia je w ApiProblemExceptions
+ * Class ApiExceptionsSubscriber
+ * @package AddUserDinoBundle\EventListener
+ */
 class ApiExceptionsSubscriber implements EventSubscriberInterface
 {
     private $debug;
 
-    public function __construct($debug)
+
+    /**
+     * AddUserDinoBundle/Api/ResponseFactory
+     * @var ResponseFactory
+     */
+    private $responseFactory;
+
+
+    public function __construct($debug, ResponseFactory $responseFactory)
     {
         $this->debug = $debug;
+        $this->responseFactory = $responseFactory;
     }
+
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
@@ -47,17 +64,7 @@ class ApiExceptionsSubscriber implements EventSubscriberInterface
             }
         }
 
-        //type według Scrap'a to absolute url
-        $data = $apiProblem->toArray();
-        if($data['type'] != 'about:blank') {
-            $data['type'] = 'http://dino.dev/app_test.php/errors#'.$data['type'];
-        }
-
-        $response = new  JsonResponse(
-            $data,
-            $apiProblem->getStatusCode()
-        );
-        $response->headers->set('Content-Type', 'application/problem+json');
+        $response = $this->responseFactory->createResponse($apiProblem);
 
         $event->setResponse($response);
     }
