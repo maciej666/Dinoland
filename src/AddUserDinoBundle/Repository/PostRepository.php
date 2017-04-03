@@ -10,4 +10,15 @@ namespace AddUserDinoBundle\Repository;
  */
 class PostRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findAllPostsQueryBuilder($filter = '')
+    {
+        $qb =  $this->createQueryBuilder('post');
+
+        if ($filter) {
+            $qb->andWhere('post.title LIKE :filter')
+                ->setParameter('filter', '%'.$filter.'%');
+        }
+
+        return $qb;
+    }
 }

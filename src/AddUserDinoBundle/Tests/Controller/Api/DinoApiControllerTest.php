@@ -112,7 +112,7 @@ class DinoApiControllerTest extends ApiTestCase
         ]);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->asserter()->assertResponsePropertyIsArray($response, 'items');
+        $this->asserter()->assertResponsePropertyIsArray($response, 'items'); //Pole items dodane w PaginatedCollection
         $this->asserter()->assertResponsePropertyCount($response, 'items', 3); // 3 to liczba userów, dwaj stworzeni powyżej i jeden przy każdym teście
         $this->asserter()->assertResponsePropertyEquals($response, 'items[2].email', 'Apility@ty.pl');
     }

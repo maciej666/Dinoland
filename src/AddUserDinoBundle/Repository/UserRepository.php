@@ -99,4 +99,5 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
         return $qb;
     }
 
+
 }

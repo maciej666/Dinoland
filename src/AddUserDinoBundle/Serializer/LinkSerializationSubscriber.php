@@ -54,13 +54,13 @@ class LinkSerializationSubscriber implements EventSubscriberInterface
         /** @var JsonSerializationVisitor $visitor */
         $visitor = $event->getVisitor();//obsługuje serializacje
 
-        $object = $event->getObject(); // aktualnie serializowany obiekt, tutaj zawsze User
+        $object = $event->getObject(); // aktualnie serializowany obiekt
 
         $annotations = $this->annotationReader
             ->getClassAnnotations(new \ReflectionObject($object));
         $links = array();
 
-        //odpalamy tylko gdy w klasa ma adnotacje link
+        //odpalamy tylko gdy klasa ma adnotacje link
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Link) {
                 $uri = $this->router->generate(

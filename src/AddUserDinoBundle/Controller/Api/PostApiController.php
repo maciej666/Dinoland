@@ -19,25 +19,34 @@ class PostApiController extends BaseController
 {
     /**
      * Lists all post entities.
-     *
+     * @Security("is_granted('IS_AUTHENTICATED_ANONYMOUSLY')")
      * @Route("/posts", name="api_blog_post_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $filter = $request->query->get('filter');
 
-        $posts = $em->getRepository('AddUserDinoBundle:Blog\Post')->findAll();
+        $posts = $qb = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:Blog\Post')
+            ->findAllPostsQueryBuilder($filter); //findAllQueryBuilder
 
-        return $this->render('blog/post/index.html.twig', array(
-            'posts' => $posts,
-        ));
+        if(!$posts) {
+            throw $this->createNotFoundException('Nie znaleziono żadnych postów');
+        }
+
+        $pagerFanta = $this->get('pagination_factory')
+            ->createCollection($qb, $request, 'api_blog_post_index');
+
+        $response = $this->createApiResponse($pagerFanta, 200);
+
+        return $response;
     }
 
     /**
      * Creates a new post entity.
      *
-     * @Route("/new/post", name="api_blog_post_new")
+     * @Route("/post/new", name="api_blog_post_new")
      * @Method("POST")
      */
     public function newAction(Request $request)
@@ -70,7 +79,7 @@ class PostApiController extends BaseController
 
         //przekierowanie z url do strony na której możemy zobaczyć nowo stworzonego posta
         $location = $this->generateUrl('blog_post_show',[
-            'id' => $post->getId()
+            'slug' => $post->getSlug()
         ]);
 
         $response = $this->createApiResponse($post, 201);
@@ -82,84 +91,88 @@ class PostApiController extends BaseController
 
     /**
      * Finds and displays a post entity.
-     *
-     * @Route("/post/{id}", name="api_blog_post_show")
+     * @Security("is_granted('IS_AUTHENTICATED_ANONYMOUSLY')")
+     * @Route("/post/{slug}", name="api_blog_post_show")
      * @Method("GET")
      */
-    public function showAction(Post $post)
+    public function showAction($slug)
     {
-        $deleteForm = $this->createDeleteForm($post);
+        $post = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:Blog\Post')
+            ->findOneBySlug($slug);
 
-        return $this->render('blog/post/show.html.twig', array(
-            'post' => $post,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        if(!$post) {
+            throw $this->createNotFoundException('Nie ma takiego posta '.$slug);
+        }
+
+        $response = $this->createApiResponse($post, 200);
+
+        return $response;
     }
 
 
     /**
      * Displays a form to edit an existing post entity.
      *
-     * @Route("/post/{id}/edit", name="api_blog_post_edit")
-     * @Method("POST")
+     * @Route("/post/edit/{slug}", name="api_blog_post_edit")
+     * @Method("PATCH")
      */
-    public function editAction(Request $request, Post $post)
+    public function editAction(Request $request, $slug)
     {
-        $Session = $this->get('session');
-        $deleteForm = $this->createDeleteForm($post);
-        $editForm = $this->createForm('AddUserDinoBundle\Form\Blog\PostType', $post);
-        $editForm->handleRequest($request);
+        /** @var  Post $post */
+        $post = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:Blog\Post')
+            ->findOneBySlug($slug);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-            $Session->getFlashBag()->add('success', 'Edytowano post :)');
-            return $this->redirectToRoute('blog_post_edit', array('id' => $post->getId()));
+        if(!$post) {
+            throw $this->createNotFoundException('Nie ma takiego posta '.$slug);
         }
 
-        return $this->render('blog/post/edit.html.twig', array(
-            'post' => $post,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+        $form = $this->createForm(PostType::class, $post, array(
+            'csrf_protection' => false
         ));
+        $this->processForm($request, $form);
+
+        //sprawdzenie poprawności przesłanych danych
+        if(!$form->isValid()){
+            $this->throwApiProblemValidationException($form);
+        }
+
+        $post->setUpdatedAt(new \DateTime());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($post);
+        $em->flush();
+
+        $response = $this->createApiResponse($post, 201);
+
+        return $response;
     }
 
 
     /**
      * Deletes a post entity.
      *
-     * @Route("/post/{id}", name="api_blog_post_delete")
+     * @Route("/post/delete/{slug}", name="api_blog_post_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Post $post)
+    public function deleteAction(Request $request, $slug)
     {
-        $Session = $this->get('session');
-        $form = $this->createDeleteForm($post);
-        $form->handleRequest($request);
+        /** @var  Post $post */
+        $post = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:Blog\Post')
+            ->findOneBySlug($slug);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($post);
-            $em->flush();
-            $Session->getFlashBag()->add('info', 'Post usunięty :)');
+        if(!$post) {
+            throw $this->createNotFoundException('Nie ma takiego posta '.$slug);
         }
 
-        return $this->redirectToRoute('blog_post_index');
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($post);
+        $em->flush();
+
+        $response = $this->createApiResponse($post, 204);
+
+        return $response;
     }
 
-
-    /**
-     * Creates a form to delete a post entity.
-     *
-     * @param Post $post The post entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Post $post)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('blog_post_delete', array('id' => $post->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-            ;
-    }
 }

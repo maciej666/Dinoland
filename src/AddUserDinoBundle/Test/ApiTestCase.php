@@ -2,6 +2,7 @@
 
 namespace AddUserDinoBundle\Test;
 
+use AddUserDinoBundle\Entity\Blog\Post;
 use AddUserDinoBundle\Entity\DinoParameters;
 use AddUserDinoBundle\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -317,6 +318,27 @@ class ApiTestCase extends KernelTestCase
 
         return $parameters;
     }
+
+
+    public function createPosts($user)
+    {
+        $post_first = new Post();
+        $post_first->setTitle('Wpis-o-samochodach');
+        $post_first->setBody('To jest info o silnikach');
+        $post_first->setCreatedAt(new \DateTime());
+        $post_first->setUser($user);
+
+        $post_second = new Post();
+        $post_second->setTitle('Wpis-na-temat-gotowania');
+        $post_second->setBody('Nie dodawaj masła do ciasta');
+        $post_second->setCreatedAt(new \DateTime());
+        $post_second->setUser($user);
+
+        $this->getEntityManager()->persist($post_first);
+        $this->getEntityManager()->persist($post_second);
+        $this->getEntityManager()->flush();
+    }
+
 
     /**
      * Udostępnia metody klasy ResponseAsserter

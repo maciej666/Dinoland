@@ -67,7 +67,7 @@ abstract class BaseController extends Controller
         //sprawdzanie czy dodano jakąś grupę serializati
         $request = $this->get('request_stack')->getCurrentRequest();
         $groups = array('Default'); // Standardowa grupa
-        //sprawdza czy dodano do requesta grupe
+        //sprawdza czy dodano do requesta grupe; patrz def. w User entity
         if ($request->query->get('deep')) {
             $groups[] = 'deep';
         }

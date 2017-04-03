@@ -6,6 +6,9 @@ use AddUserDinoBundle\Entity\Timestampable;
 use AddUserDinoBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
+use AddUserDinoBundle\Annotation\Link; //patrz odc. 8 course 3 o towrzeniu własnych adnotacji, dodatkowe pole dodaje LinkSerializationSubscriber
+use JMS\Serializer\Annotation as Serializer; //odc. 20 course 1 Jeżli brak @Serializer\Expose() to pole nie jest wysyłane w JsonResponse
 
 
 /**
@@ -13,6 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table(name="post")
  * @ORM\Entity(repositoryClass="AddUserDinoBundle\Repository\PostRepository")
+ * @Serializer\ExclusionPolicy("all")
+ * @Link(
+ *  "self",
+ *  route = "api_blog_post_show",
+ *  params = { "slug" : "object.getSlug()" }
+ * )
  */
 class Post extends Timestampable
 {
@@ -28,6 +37,7 @@ class Post extends Timestampable
     /**
      * @var string
      * @Assert\NotBlank(message="Proszę podać tytuł")
+     * @Serializer\Expose()
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
@@ -35,9 +45,19 @@ class Post extends Timestampable
     /**
      * @var string
      * @Assert\NotBlank(message="Proszę coś napisać")
+     * @Serializer\Expose()
      * @ORM\Column(name="body", type="text")
      */
     private $body;
+
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"title"})
+     * @Serializer\Expose()
+     * @ORM\Column(length=255)
+     */
+    private $slug;
 
     /**
      * @var User
@@ -120,6 +140,22 @@ class Post extends Timestampable
     public function setUser($user)
     {
         $this->user = $user;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
     }
 }
 

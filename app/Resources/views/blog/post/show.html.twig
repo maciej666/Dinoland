@@ -28,7 +28,7 @@
                 <a href="{{ path('blog_post_index') }}">Back to the list</a>
             </li>
             <li>
-                <a href="{{ path('blog_post_edit', { 'id': post.id }) }}">Edit</a>
+                <a href="{{ path('blog_post_edit', { 'slug': post.slug }) }}">Edit</a>
             </li>
             <li>
                 {{ form_start(delete_form) }}

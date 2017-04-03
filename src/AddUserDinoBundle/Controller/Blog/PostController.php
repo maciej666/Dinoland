@@ -20,14 +20,19 @@ class PostController extends Controller
      * @Route("/posts", name="blog_post_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $filter = $request->query->get('filter');
 
-        $posts = $em->getRepository('AddUserDinoBundle:Blog\Post')->findAll();
+        $qb = $this->getDoctrine()
+            ->getRepository('AddUserDinoBundle:Blog\Post')
+            ->findAllPostsQueryBuilder($filter);
 
+        $pagerFanta = $this->get('pagination_factory')
+            ->createPagerFanta($qb, $request, 'blog_post_index')[0];
+//        dump($paginatedCollection);die;
         return $this->render('blog/post/index.html.twig', array(
-            'posts' => $posts,
+            'paginatedCollection' => $pagerFanta
         ));
     }
 
@@ -51,7 +56,7 @@ class PostController extends Controller
             $em->persist($post);
             $em->flush();
             $Session->getFlashBag()->add('success', 'Stworzono post :)');
-            return $this->redirectToRoute('blog_post_show', array('id' => $post->getId()));
+            return $this->redirectToRoute('blog_post_show', array('slug' => $post->getSlug()));
         }
 
         return $this->render('blog/post/new.html.twig', array(
@@ -63,7 +68,7 @@ class PostController extends Controller
     /**
      * Finds and displays a post entity.
      *
-     * @Route("/post/{id}", name="blog_post_show")
+     * @Route("/post/{slug}", name="blog_post_show")
      * @Method("GET")
      */
     public function showAction(Post $post)
@@ -79,7 +84,7 @@ class PostController extends Controller
     /**
      * Displays a form to edit an existing post entity.
      *
-     * @Route("/post/{id}/edit", name="blog_post_edit")
+     * @Route("/post/{slug}/edit", name="blog_post_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Post $post)
@@ -92,7 +97,7 @@ class PostController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
             $Session->getFlashBag()->add('success', 'Edytowano post :)');
-            return $this->redirectToRoute('blog_post_edit', array('id' => $post->getId()));
+            return $this->redirectToRoute('blog_post_edit', array('slug' => $post->getSlug()));
         }
 
         return $this->render('blog/post/edit.html.twig', array(
@@ -105,7 +110,7 @@ class PostController extends Controller
     /**
      * Deletes a post entity.
      *
-     * @Route("/post/{id}", name="blog_post_delete")
+     * @Route("/post/{slug}", name="blog_post_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Post $post)
@@ -134,7 +139,7 @@ class PostController extends Controller
     private function createDeleteForm(Post $post)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('blog_post_delete', array('id' => $post->getId())))
+            ->setAction($this->generateUrl('blog_post_delete', array('slug' => $post->getSlug())))
             ->setMethod('DELETE')
             ->getForm()
         ;

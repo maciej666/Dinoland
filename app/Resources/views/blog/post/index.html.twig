@@ -15,23 +15,28 @@
                 </tr>
             </thead>
             <tbody>
-            {% for post in posts %}
+            {% if paginatedCollection != null %}
+            {% for post in paginatedCollection %}
                 <tr>
-                    <td><a href="{{ path('blog_post_show', { 'id': post.id }) }}">{{ post.id }}</a></td>
+                    <td><a href="{{ path('blog_post_show', { 'slug': post.slug }) }}">{{ post.id }}</a></td>
                     <td>{{ post.title }}</td>
                     <td>{{ post.body }}</td>
                     <td>
                         <ul>
                             <li>
-                                <a href="{{ path('blog_post_show', { 'id': post.id }) }}">show</a>
+                                <a href="{{ path('blog_post_show', { 'slug': post.slug }) }}">show</a>
                             </li>
                             <li>
-                                <a href="{{ path('blog_post_edit', { 'id': post.id }) }}">edit</a>
+                                <a href="{{ path('blog_post_edit', { 'slug': post.slug }) }}">edit</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
             {% endfor %}
+                {{ pagerfanta(paginatedCollection) }}
+            {% else %}
+                <h4>Aktualnie nie ma żadnych postów</h4>
+            {% endif %}
             </tbody>
         </table>
 

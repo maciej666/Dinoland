@@ -6,15 +6,14 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Finder\Finder;
 
-class LoadUsersAccountsData extends AbstractFixture implements FixtureInterface
+class LoadDinoPosts extends AbstractFixture implements FixtureInterface
 {
 
     public function load(ObjectManager $manager)
     {
-        // Dodaje content dla strony /dino_account
         $finder = new Finder();
         $finder->in(__DIR__);
-        $finder->name('fos_user.sql');
+        $finder->name('post.sql');
 
         foreach( $finder as $file ){
             $content = $file->getContents();
@@ -26,6 +25,6 @@ class LoadUsersAccountsData extends AbstractFixture implements FixtureInterface
 
 
     public function getOrder() {
-        return 6;  // Order in which this fixture will be executed
+        return 5;  // Order in which this fixture will be executed
     }
 }
