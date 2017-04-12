@@ -13,9 +13,11 @@ parameters:
     locale: pl
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
 
+
 services:
     fos_user.doctrine_registry:
         alias: doctrine
+
 
 framework:
     #esi:             ~
@@ -27,7 +29,6 @@ framework:
     form:            ~
     csrf_protection: ~
     validation:      { enable_annotations: true }
-    #serializer:      { enable_annotations: true }
     templating:
         engines: ['twig']
     default_locale:  "%locale%"
@@ -41,12 +42,12 @@ framework:
     http_method_override: true
     assets: ~
 
+
 # Twig Configuration
 twig:
-#    form_themes:
-#            - 'bootstrap_3_horizontal_layout.html.twig'
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+
 
 # Doctrine Configuration
 doctrine:
@@ -58,44 +59,11 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  UTF8
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
-
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
-#        entity_managers:
-#            default:
-#                mappings:
-#                    gedmo_translatable:
-#                        type: annotation
-#                        prefix: Gedmo\Translatable\Entity
-#                        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
-#                        alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
-#                        is_bundle: false
-#                    gedmo_translator:
-#                        type: annotation
-#                        prefix: Gedmo\Translator\Entity
-#                        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translator/Entity"
-#                        alias: GedmoTranslator # (optional) it will default to the name set for the mapping
-#                        is_bundle: false
-#                    gedmo_loggable:
-#                        type: annotation
-#                        prefix: Gedmo\Loggable\Entity
-#                        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Loggable/Entity"
-#                        alias: GedmoLoggable # (optional) it will default to the name set for the mappingmapping
-#                        is_bundle: false
-#                    gedmo_tree:
-#                        type: annotation
-#                        prefix: Gedmo\Tree\Entity
-#                        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Tree/Entity"
-#                        alias: GedmoTree # (optional) it will default to the name set for the mapping
-#                        is_bundle: false
+
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -106,42 +74,20 @@ fos_user:
                     enabled: true
                 form:
                     type: AddUserDinoBundle\Form\DinoType
-#    registration:
-#                form:
-#                    type: acme_user_registration
-#                    validation_groups: [AcmeRegistration]
-#        profile:
-#                form:
-#                    type: acme_user_profile
-#                    validation_groups: [AcmeProfile]
     from_email:
             address:        boban.kamienczuk666@gmail.com
             sender_name:    Boban Kamieńczuk
     service:
             mailer:         fos_user.mailer.default
-#    resetting:
-#            email:
-#                template:   LogBundle:Resseting:email.txt.twig
-#    registration:
-#            confirmation:
-#                template:   LogBundle:Registration:email.txt.twig
 
-#vich_uploader:
-#    db_driver: orm
-#    mappings:
-#            dino_image:              # give the upload mapping a name
-#                uri_prefix:         /images/dinos
-#                upload_destination: '%kernel.root_dir%/../web/images/dinos'
-#                inject_on_load:     false
-#                delete_on_update:   true  #czy plik powinien być usunięty gdy wgrywamy nowy plik
-#                delete_on_remove:   true  #czy powinno się usuwać plik gdy usuniemy encje
-# Swiftmailer Configuration
+
 swiftmailer:
     transport: "%mailer_transport%"
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
 
 stof_doctrine_extensions:
     orm:
@@ -151,13 +97,13 @@ stof_doctrine_extensions:
             uploadable: true
             loggable: true
 
+
 lexik_jwt_authentication:
     private_key_path: '%jwt_private_key_path%'
     public_key_path:  '%jwt_public_key_path%'
     pass_phrase:      '%jwt_key_pass_phrase%'
     token_ttl:        '%jwt_token_ttl%'
     user_identity_field: username
-
     encoder:
         # token encoder/decoder service - default implementation based on the namshi/jose library
         service:            lexik_jwt_authentication.encoder.default
@@ -166,15 +112,13 @@ lexik_jwt_authentication:
         # encryption algorithm used by the encoder service
         signature_algorithm: RS256
 
-    # token extraction settings
-#    token_extractors:
-#        authorization_header:      # look for a token as Authorization Header
-#            enabled: true
-#            prefix:  Bearer
-#            name:    Authorization
-#        cookie:                    # check token in a cookie
-#            enabled: false
-#            name:    BEARER
-#        query_parameter:           # check token in query string parameter
-#            enabled: false
-#            name:    bearer
+
+vich_uploader:
+    db_driver: orm # or mongodb or propel or phpcr
+    mappings:
+            dino_image:
+                uri_prefix:         /images/dinos
+                upload_destination: '%kernel.root_dir%/../web/images/dinos'
+                inject_on_load:     false
+                delete_on_update:   true
+                delete_on_remove:   true

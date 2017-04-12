@@ -3,8 +3,8 @@ parameters:
 
 services:
     dino_manager:
-        class: %dinoUser_manager.class%
-        arguments: ["@doctrine.orm.entity_manager"]
+        class: '%dinoUser_manager.class%'
+        arguments: ["@doctrine.orm.entity_manager" ]
 
     dino_test:
         class: AddUserDinoBundle\Tests\Controller\Api\DinoApiControllerTest

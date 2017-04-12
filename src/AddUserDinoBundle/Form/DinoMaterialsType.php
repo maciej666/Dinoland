@@ -35,7 +35,7 @@ class DinoMaterialsType extends AbstractType
                 'label' => 'Dostęp',
                 'multiple' => false
             ))
-//            ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
+            ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
 
         ;
     }

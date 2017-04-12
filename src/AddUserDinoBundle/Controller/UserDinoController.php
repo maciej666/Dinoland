@@ -67,37 +67,7 @@ class UserDinoController extends Controller
      */
     function test2Action()
     {
-        $dinoId = $this->getUser()->getDino()->getId();
-        $em = $this->getDoctrine()->getManager();
-        $dinoParameters = $em->getRepository('AddUserDinoBundle:DinoParameters')->findOneById($dinoId);
-
-        $day_in_sec = '86400';
-        $last_update = $dinoParameters->getUpdatedAt();
-
-        $date1 = new \DateTime('now');
-        $date11 = new \DateTime('now');
-        $date2 = new \DateTime('+10 minutes');
-
-        //ile czasu upłyneło od update'a
-        $interval = $last_update->diff($date1);
-
-        //To tworzy obiekt DateInterval z 10 minutami
-        $interval2 = $date1->diff($date2);
-
-        //To tworzy obiekty DateTime + odpowiedni przedział czasowy (tak o gdyż nie mozna porównywac obiektów DateInterval)
-        $date1->add($interval);
-        $date11->add($interval2);
-
-        if($date1 > $date11 ){
-            $pies = 'tak wolno modyfikować';
-        }else{
-            $pies = 'nie nie wolno modyfikować ';
-        }
-
-        return array(
-            'dinoParameters' => $dinoParameters,
-            'pies' => $pies
-        );
+        return array();
     }
 }
 

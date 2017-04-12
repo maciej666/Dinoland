@@ -1,0 +1,52 @@
+{% form_theme editUserForm 'bootstrap_3_layout.html.twig' %}
+{% form_theme editParametersForm 'bootstrap_3_layout.html.twig' %}
+{% form_theme editMaterialsForm 'bootstrap_3_layout.html.twig' %}
+<script>
+    var active = $('#accordion_active').data('accordion_active');
+    $("#accordion_forms").accordion({
+        collapsible: true, //żeby móc zamknąć wszystkie panele
+        animate: 900, //czas trwania animacji
+        active: active, //który panel ma być otwarty, tu drugi/ Rozmiar defaultowego diva będzie rozmiarem każdego diva
+        heightStyle: "content" //wysokość panelu zależy od ilości tekstu
+    });
+</script>
+<span id="accordion_active" data-accordion_active="{{ activeInfo | default(false) }}"></span>
+<h4 style="color: green;">Edytuj dane |{{ user.name }}|</h4>
+<div id="accordion_forms">
+        <h3> Dane użytkownika </h3>
+        <div id="edit_user_form">
+        {{ form_start(editUserForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
+
+        {{ form_row(editUserForm.email) }}
+        {{ form_row(editUserForm.name) }}
+        {{ form_row(editUserForm.species) }}
+        {{ form_row(editUserForm.age) }}
+
+        {{ form_end(editUserForm) }}
+        </div>
+
+        <h3> Dino-surowce</h3>
+        <div id="edit_materials_form">
+        {{ form_start(editMaterialsForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
+
+        {{ form_row(editMaterialsForm.wood) }}
+        {{ form_row(editMaterialsForm.stone) }}
+        {{ form_row(editMaterialsForm.bone) }}
+        {{ form_row(editMaterialsForm.flint) }}
+        {{ form_row(editMaterialsForm.access) }}
+
+        {{ form_end(editMaterialsForm) }}
+        </div>
+
+        <h3> Dino-umiejętności</h3>
+        <div id="edit_parmaters_form">
+        {{ form_start(editParametersForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
+
+        {{ form_row(editParametersForm.health) }}
+        {{ form_row(editParametersForm.backup) }}
+        {{ form_row(editParametersForm.speed) }}
+        {{ form_row(editParametersForm.strength) }}
+
+        {{ form_end(editParametersForm) }}
+        </div>
+</div>

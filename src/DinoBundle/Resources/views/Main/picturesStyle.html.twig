@@ -1,0 +1,60 @@
+{#Style zależnie od wykupionych poziomów#}
+                                {% if dino_materials.access >= 1 %}
+                                    <style scoped>
+                                        #schron1 {
+                                            opacity: 0.3;
+                                        }
+                                    </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 2 %}
+                                    <style scoped>
+                                        #schron1 {
+                                            opacity: 1;
+                                        }
+                                    </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 3 %}
+                                    <style scoped>
+                                        #schron2 {
+                                            opacity: 0.3;
+                                        }
+                                    </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 4 %}
+                                    <style scoped>
+                                        #schron2 {
+                                            opacity: 1;
+                                        }
+                                    </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 5 %}
+                                    <style scoped>
+                                        #schron3 {
+                                            opacity: 0.3;
+                                        }
+                                    </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 6 %}
+                                    <style scoped>
+                                        #schron3 {
+                                            opacity: 1;
+                                        }
+                                    </style>
+                                {% endif %}
+
+                                {% if dino_materials.access >= 7 %}
+                                    <style scoped>
+                                        #schron4 {
+                                            opacity: 0.3;
+                                        }
+                                    </style>
+                                {% endif %}
+                                {% if dino_materials.access >= 8 %}
+                                    <style scoped>
+                                        #schron4 {
+                                            opacity: 1;
+                                        }
+                                    </style>
+                                {% endif %}

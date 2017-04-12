@@ -1,0 +1,42 @@
+<h2>Tabela z userami</h2>
+<div id="first_table">
+    <table id="admin_users_table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th> Dino-imię </th>
+            <th> Email </th>
+            <th> Aktywacja konta </th>
+            <th> Poziom dostępu </th>
+            <th> Gatunek Dina </th>
+            <th> Wiek Dina </th>
+        </tr>
+        </thead>
+        <tbody>
+        {#Tu się wyświetla user dopiero co zedytowany z innym stylem i jako pierwszego w tabeli#}
+        {% if edited != false %}
+            <tr class="users-in-table" id="edited-user" data-edituser="{{ user.id }}" >
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{% if user.enabled == 0 %} 0
+                    {% else %}{{ user.enabled }}{% endif %}
+                </td>
+                <td> ROLE_USER - fake </td>
+                <td>{{ user.species }}</td>
+                <td>{{ user.age }}</td>
+            </tr>
+        {% endif %}
+        {% for user in users if user.id != edited  %}
+            <tr class="users-in-table" data-edituser="{{ user.id }}">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{% if user.enabled == 0 %} 0
+                    {% else %}{{ user.enabled }}{% endif %}
+                </td>
+                <td> ROLE_USER - fake </td>
+                <td>{{ user.species }}</td>
+                <td>{{ user.age }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

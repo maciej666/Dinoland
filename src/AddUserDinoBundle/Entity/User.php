@@ -120,6 +120,32 @@ class User extends BaseUser
     private $posts;
 
 
+    /**
+     * @var DinoImage
+     *
+     * @ORM\OneToOne(targetEntity="AddUserDinoBundle\Entity\DinoImage", inversedBy="user")
+     * @Serializer\Expose()
+     * @ORM\JoinColumn(name="image_id", referencedColumnName="id")
+     */
+    private $image;
+
+    /**
+     * @return DinoImage
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param DinoImage $image
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+    }
+
+
     public function __construct()
     {
         parent::__construct();

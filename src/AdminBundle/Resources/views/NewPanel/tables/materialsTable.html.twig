@@ -1,0 +1,35 @@
+<h2>Tabela z surowcami</h2>
+<div id="third_table">
+    <table id="admin_materials_table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th> Dino-imię </th>
+            <th> Wood </th>
+            <th> Stone </th>
+            <th> Bone</th>
+            <th> Flint </th>
+        </tr>
+        </thead>
+        <tbody>
+        {#Tu się wyświetla user dopiero co zedytowany z innym stylem i jako pierwszego w tabeli#}
+        {% if edited != false %}
+            <tr class="users-in-table" id="edited-user" data-edituser="{{ user.id }}" >
+                <td >{{ user.name }} </td>
+                <td>{{ user.materia.wood }}</td>
+                <td> {{ user.materia.stone }} </td>
+                <td>{{ user.materia.bone }}</td>
+                <td>{{ user.materia.flint }}</td>
+            </tr>
+        {% endif %}
+        {% for user in users if user.id != edited  %}
+            <tr class="users-in-table" data-edituser="{{ user.id }}">
+                <td >{{ user.name }} </td>
+                <td>{{ user.materia.wood }}</td>
+                <td> {{ user.materia.stone }} </td>
+                <td>{{ user.materia.bone }}</td>
+                <td>{{ user.materia.flint }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

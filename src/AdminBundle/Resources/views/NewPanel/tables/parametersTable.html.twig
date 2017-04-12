@@ -1,0 +1,35 @@
+<h2>Tabela z umiejętnościami</h2>
+<div id="second_table">
+    <table id="admin_parameters_table" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th> Dino-imię </th>
+            <th> Health </th>
+            <th> Speed </th>
+            <th> Strength</th>
+            <th> Backup </th>
+        </tr>
+        </thead>
+        <tbody>
+        {#Tu się wyświetla user dopiero co zedytowany z innym stylem i jako pierwszego w tabeli#}
+        {% if edited != false %}
+            <tr class="users-in-table" id="edited-user" data-edituser="{{ user.id }}" >
+                <td >{{ user.name }} </td>
+                <td>{{ user.dino.health }}</td>
+                <td> {{ user.dino.speed }} </td>
+                <td>{{ user.dino.strength }}</td>
+                <td>{{ user.dino.backup }}</td>
+            </tr>
+        {% endif %}
+        {% for user in users if user.id != edited  %}
+            <tr class="users-in-table" data-edituser="{{ user.id }}">
+                <td >{{ user.name }} </td>
+                <td>{{ user.dino.health }}</td>
+                <td> {{ user.dino.speed }} </td>
+                <td>{{ user.dino.strength }}</td>
+                <td>{{ user.dino.backup }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

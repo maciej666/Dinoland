@@ -1,6 +1,7 @@
 <?php
 
 namespace AddUserDinoBundle\Repository;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * UserRepository
@@ -98,6 +99,5 @@ class UserRepository extends \Doctrine\ORM\EntityRepository
 
         return $qb;
     }
-
 
 }

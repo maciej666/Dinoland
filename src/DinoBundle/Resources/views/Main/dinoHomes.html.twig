@@ -1,0 +1,107 @@
+{#------------DINO SCHRONY-------------------#}
+<h2 style="margin-top: 35px; margin-bottom: 0px;"> DINO SCHRONY: </h2>
+<span style="font-size: 14px; " >(Dino bez schronu to jak żołnierz bez karabinu)</span>
+
+                        {% for cont in content %}
+
+                        {% set i = loop.index0*2 %}
+
+                        <div class="row" style="margin-top: 25px;">
+                            <div class="col-sm-3" style="text-align: center;">
+                                <span style="color:black; "> {{ cont.homeName }} </span>
+
+
+                                {{ source(cont.foto) }}
+
+                                {#Też działa#}
+                                {#{% include (cont.foto) %}#}
+                            </div>
+
+                            <div class="col-sm-1">
+
+                            </div>
+
+                            <div class="col-sm-4">
+
+                                {% if dino_materials.access > i %}
+                                    <p style="margin-bottom: 0px; color: #ffaa00;" >POZIOM {{ i +1 }} WYKUPIONY</p>
+                                {% elseif dino_materials.access == i and dino_home[i] == i  %}
+                                    <p style="margin-bottom: 0px; color: yellowgreen;" >POZIOM {{ i + 1 }} WYKUP</p>
+                                {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                    <p style="margin-bottom: 0px; color: #253300;" >POZIOM {{ i + 1 }} NIE STAĆ CIĘ</p>
+                                {% else %}
+                                    <p style="margin-bottom: 0px; color: red;" >POZIOM {{ i + 1 }} NIEDOSTĘPNY </p>
+                                {% endif %}
+
+                                <div class="col-sm-6" style="text-align: center;">
+
+                                    <ul>Wymagania:
+                                        <li>Drewno: {{ cont.reqWood1 }}</li>
+                                        <li>Kamień: {{ cont.reqStone1 }}</li>
+                                        <li>Kość: {{ cont.reqBone1 }}</li>
+                                        <li>Krzemień: {{ cont.reqFlint1 }}</li>
+                                    </ul>
+                                    {#dino_materials.access sprawdza co user ma wykupione#}
+                                    {#dino_home czy ma odpowiednią ilość surowca żeby wykupić kolejny schron#}
+                                    {% if dino_materials.access == i and dino_home[i] == i  %}
+                                        <button type="button" style="border: none;" id="btnHome" onclick="addHome();" class="btn btn-default">Wyposaż</button>
+                                        <span id="home_btn" style="display: none;">{{ i }}</span>
+                                    {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                        <button type="button" style="border: none;"  class="btn btn-default disabled"> brak surowca </button>
+                                    {% elseif dino_materials.access > i %}
+                                        <span class="glyphicon glyphicon-home">  </span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-ban-circle"></span>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="col-sm-6" style="border-left: 6px solid blue; text-align: justify; background-color: lightgrey;">
+                                    {{ cont.descriptionLvl1 }}
+                                </div>
+
+                            </div>
+                            {#------------------------------------------------------------------------------------------------------#}
+                            <div class="col-sm-4">
+
+                                {% set i = i + 1 %}
+
+                                {% if dino_materials.access > i %}
+                                    <p style="margin-bottom: 0px; color: #ffaa00;" >POZIOM {{ i +1 }} WYKUPIONY</p>
+                                {% elseif dino_materials.access == i and dino_home[i] == i  %}
+                                    <p style="margin-bottom: 0px; color: yellowgreen;" >POZIOM {{ i + 1 }} WYKUP</p>
+                                {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                    <p style="margin-bottom: 0px; color: #253300;" >POZIOM {{ i + 1 }} NIE STAĆ CIĘ</p>
+                                {% else %}
+                                    <p style="margin-bottom: 0px; color: red;" >POZIOM {{ i + 1 }} NIEDOSTĘPNY </p>
+                                {% endif %}
+                                <div class="col-sm-6" style="text-align: center;">
+
+                                    <ul>Wymagania:
+                                        <li>Drewno: {{ cont.reqWood2 }}</li>
+                                        <li>Kamień: {{ cont.reqStone2 }}</li>
+                                        <li>Kość: {{ cont.reqBone2 }}</li>
+                                        <li>Krzemień: {{ cont.reqFlint2 }}</li>
+                                    </ul>
+
+                                    {% if dino_materials.access == i and dino_home[i] == i  %}
+                                        <button type="button" style="border: none;" id="btnHome" onclick="addHome();" class="btn btn-default">Wyposaż</button>
+                                        <span id="home_btn" style="display: none;">{{ i }}</span>
+                                    {% elseif dino_materials.access == i and dino_home[i] != i  %}
+                                        <button type="button" style="border: none;"  class="btn btn-default disabled">brak surowca</button>
+                                    {% elseif dino_materials.access > i %}
+                                        <span class="glyphicon glyphicon-home">  </span>
+                                    {% else %}
+                                        <span class="glyphicon glyphicon-ban-circle"></span>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="col-sm-6" style="border-left: 6px solid blue; text-align: justify; background-color: lightgrey;">
+                                    {{ cont.descriptionLvl2 }}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    {% endfor %}

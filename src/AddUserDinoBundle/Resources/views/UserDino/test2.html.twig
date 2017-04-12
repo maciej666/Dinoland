@@ -1,2 +1,190 @@
+<!doctype html>
+
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+
+    <title>JQuery</title>
+    <meta name="description" content="Jquey tutorial">
+    <meta name="author" content="SitePoint">
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/adduserdino/js/jquery-ui-blitzer-theme/jquery-ui.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/adduserdino/js/jquery-ui-blitzer-theme/jquery-ui.structure.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/adduserdino/js/jquery-ui-blitzer-theme/jquery-ui.theme.css') }}">
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/adduserdino/css/jquerytutorial.css') }}">
+</head>
+
+<body>
 {#{{ dump(dinoParameters) }}#}
-{{ pies }}
+<div class="container">
+    <div class="col-sm-2">
+        <ul id="verticalMenu">
+            <li><a href="#">Dino</a>
+                <ul>
+                    <li><a href="#">Foto</a></li>
+                    <li><a href="#">Okres</a></li>
+                    <li><a href="#">Inne</a></li>
+                </ul>
+            </li>
+            <li>-</li>
+            <li><a href="#">Jadło</a>
+                <ul>
+                    <li><a href="#">Foto</a></li>
+                    <li><a href="#">Okres</a></li>
+                    <li><a href="#">Inne</a></li>
+                </ul>
+            </li>
+            <li>-</li>
+            <li><a href="#">Wypoczynek</a>
+                <ul>
+                    <li><a href="#">Foto</a></li>
+                    <li><a href="#">Okres</a></li>
+                    <li><a href="#">Inne</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="col-sm-10">
+        <h1>Kurs JQuery</h1>
+        <h2></h2>
+        <div id="box">
+            <p>Dzięki że wpadłeś do dinolandu</p>
+            <img id="manekin_img" src="{{ asset('bundles/dino/images/Teropod.jpeg') }}" style="width: 100px; height: 100px; ">
+        </div>
+        <div class="row">
+            <div id="left" class="col-sm-4">
+                <h2>Left Content Area</h2>
+                <p class="bob">This area will contain the left content area.
+                    We will populate this area with images and text. </p>
+                <p>Second This area will contain the left content area.
+                    We will populate this area with images and text. </p>
+            </div>
+
+            <div id="center" class="col-sm-4">
+                <h2>Center Content Area</h2>
+                <p>This area will contain the center content area.
+                    This area will contain the main articles. </p>
+                Pick a travel date: <input type="text" id="pickdate">
+            </div>
+
+            <div id="right" class="col-sm-4">
+                <h2>Right Content Area</h2>
+                <ul>
+                    <li>First</li>
+                    <li>Second</li>
+                    <li></li>
+                </ul>
+                <p>This area will contain the right content area.
+                    We will <b>haha</b> populate this area with links and text.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div id="img-box" class="col-sm-4">
+                <p>Manekin</p>
+                <img id="manekin_img" src="{{ asset('bundles/dino/images/Teropod.jpeg') }}" title="Foto manekina">
+            </div>
+
+
+            <div id="test">
+                <button> Hit button to change something </button>
+            </div>
+            <div id="test_extra">
+                <button> Hit button to slides </button>
+            </div>
+
+            <div id="secret" hidden>
+                <p class="danger">Secret div</p>
+            </div>
+        </div>
+        <div id="row">
+            <div id="accordion_panels">
+                <h2>Section on Ancient Rome</h2>
+
+                <div>
+                    The Ancient Romans conquered a huge amount of territory during ancient times.
+                    One of the most famous Romans was Julius Caesar. The Ancient Romans conquered a huge amount of territory during ancient times.
+                    One of the most famous Romans was Julius Caesar. The Ancient Romans conquered a huge amount of territory during ancient times.
+                    One of the most famous Romans was Julius Caesar. The Ancient Romans conquered a huge amount of territory during ancient times.
+                    One of the most famous Romans was Julius Caesar. The Ancient Romans conquered a huge amount of territory during ancient times.
+                    One of the most famous Romans was Julius Caesar.
+                </div>
+
+                <h2>Section on Ancient Greece</h2>
+
+                <div>
+                    The Ancient Greeks fought several wars against Persia.
+                    One of the most famous Greeks was Pericles.
+                    One of the most famous Greeks was Pericles.
+                    One of the most famous Greeks was Pericles.
+
+                </div>
+
+                <h2>Section on Ancient Egypt</h2>
+
+                <div>
+                    The Ancient Egyptians build large structures such as the pyramids.
+                    One of the most famous Egyptians was Cleopatra.
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Collapsible Group 1 Bootstrap</a>
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Collapsible Group 2</a>
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Collapsible Group 3</a>
+                    </h4>
+                </div>
+                <div id="collapse3" class="panel-collapse collapse">
+                    <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{#<----------------------------scripts--------------------------->#}
+<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+<script src={{ asset('bundles/adduserdino/js/jquery-ui-blitzer-theme/jquery-ui.js') }}></script>
+<script type="text/javascript">
+    // Change JQueryUI plugin names to fix name collision with Bootstrap. http://www.ryadel.com/en/using-jquery-ui-bootstrap-togheter-web-page/
+    $.widget.bridge('uitooltip', $.ui.tooltip);
+    $.widget.bridge('uibutton', $.ui.button);
+</script>
+<script src={{ asset('bundles/adduserdino/js/JQueryTutorial.js') }}></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+</body>
+</html>

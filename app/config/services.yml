@@ -35,3 +35,12 @@ services:
 
     api.response_factory:
         class: AddUserDinoBundle\Api\ResponseFactory
+
+    upload_file_service:
+        class: DinoBundle\Services\FileUploadManager
+        arguments: ['@doctrine.orm.entity_manager', '@form.factory']
+
+    inject_web_dir_parameters_entity:
+        class: AddUserDinoBundle\Entity\DinoParameters
+        arguments: ['%kernel.root_dir%']
+

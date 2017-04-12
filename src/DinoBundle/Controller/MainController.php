@@ -2,10 +2,14 @@
 
 namespace DinoBundle\Controller;
 
+use AddUserDinoBundle\Entity\DinoImage;
+use AddUserDinoBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use AddUserDinoBundle\Entity\DinoParameters;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +30,7 @@ class MainController extends Controller
         }
         $logged_user = $this->getUser();
         $dino_parameters = $logged_user->getDino();
+        
 
         return array(
             'logged_user' => $logged_user,
@@ -40,18 +45,36 @@ class MainController extends Controller
      * @return array
      * @Template
      */
-    public function showDinoAction()
+    public function showDinoAction(Request $request)
     {
         if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException();
         }
+        /** @var User */
         $logged_user = $this->getUser();
+        /** @var  DinoParameters */
         $dino_parameters = $logged_user->getDino();
 
-        $updated = $this->get('dinoManager')->checkUpdate($logged_user);
-        $dino_materials = $this->get('dinoManager')->showMaterials($logged_user);
-        $dino_home = $this->get('dinoManager')->checkHomeRequirements($logged_user);
-        $time_to_update = $this->get('dinoManager')->timeToUpdate($logged_user);
+        $dino_image = $this->get('dino_manager')->getImage($logged_user);
+        $helper = $this->container->get('vich_uploader.templating.helper.uploader_helper');
+        $dino_image_path = $helper->asset($dino_image, 'imageFile');
+
+        //Formularz do dodania zdjęcia Dina
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm('AddUserDinoBundle\Form\DinoImageType', $dino_image);
+
+        $form->handleRequest($request);
+//        var_dump($form->isValid());die;
+        if ($form->isValid()) {
+            $logged_user->setImage($dino_image);
+            $em->persist($dino_image);
+            $em->flush();
+        }
+
+        $updated = $this->get('dino_manager')->checkUpdate($logged_user);
+        $dino_materials = $this->get('dino_manager')->showMaterials($logged_user);
+        $dino_home = $this->get('dino_manager')->checkHomeRequirements($logged_user);
+        $time_to_update = $this->get('dino_manager')->timeToUpdate($logged_user);
         $em = $this->getDoctrine()->getManager();
         $content = $em->getRepository('AddUserDinoBundle:DinoContent')->findAll();
 
@@ -62,7 +85,9 @@ class MainController extends Controller
             'dino_materials' => $dino_materials,
             'dino_home' => $dino_home,
             'content' => $content,
-            'time_to_update' => $time_to_update
+            'time_to_update' => $time_to_update,
+            'upload_file_form' => isset($form) ? $form->createView() : NULL,
+            'dino_image_path' => isset($dino_image_path) ? $dino_image_path : NULL
         );
     }
 
@@ -73,88 +98,4 @@ class MainController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * @Route("/2", name="main2")
-     *
-     * @Template
-     */
-    public function mainPage2Action(){
-
-        return array();
-
-    }
-
-
-    /**
-     *
-     * @Route("/message", name="message")
-     *
-     * @Template
-     */
-    public function messageAction()
-    {
-        return array();
-    }
-
-    /**
-     * @Route("/sendMail", name="sendMail")
-     */
-    public function sendMailAction(){
-
-        $subject = $_POST['subject'];
-        $email = $_POST['email'];
-        $body = $_POST['body'];
-        $session = $this->get('session');
-
-        $message = \Swift_Message::newInstance()
-            ->setSubject($subject)
-            ->setFrom($email)
-            ->setTo('boban.kamienczuk666@gmail.com')
-            ->setBody(
-                $this->renderView(
-                // app/Resources/views/Emails/registration.html.twig
-                    'DinoBundle:Main:mail.html.twig',
-                    array('body' => $body,
-                        'subject' => $subject
-                    )
-                ),
-                'text/html'
-            )
-        ;
-        $this->get('mailer')->send($message);
-        $session->getFlashBag()->add('success', 'Wysłano maila!');
-
-
-        return $this->render('DinoBundle:Main:mainPage.html.twig');
-    }
-
-//    /**
-//     * @Route("/test", name="test")
-//     * @Template
-//     */
-//    public function testAction{
-//        return array();
-//    }
 }

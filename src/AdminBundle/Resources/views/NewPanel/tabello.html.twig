@@ -1,0 +1,89 @@
+<script>
+    ////tworzy datatables https://datatables.net/manual/installation
+    $('#admin_users_table').DataTable();
+    $('#admin_parameters_table').DataTable();
+    $('#admin_materials_table').DataTable();
+    // JQuery accordion
+    $("#accordion_panels").accordion({
+        collapsible: true, //żeby móc zamknąć wszystkie panele
+        animate: 900, //czas trwania animacji
+        active: 0, //który panel ma być otwarty, tu drugi/ Rozmiar defaultowego diva będzie rozmiarem każdego diva
+        heightStyle: "content" //wysokość panelu zależy od ilości tekstu
+    });
+
+</script>
+<style>
+    #edited-user {
+        cursor: pointer;
+        background-color: darkorange!important;
+    }
+    .users-in-table:hover {
+        cursor: pointer;
+        background-color: #bce8f1!important;
+    }
+</style>
+
+<div id="accordion_panels">
+    {% include 'AdminBundle:NewPanel/tables:userTable.html.twig' %}
+    {% include 'AdminBundle:NewPanel/tables:parametersTable.html.twig' %}
+    {% include 'AdminBundle:NewPanel/tables:materialsTable.html.twig' %}
+</div>
+
+<script>
+    //NIE DZIAŁA Z document ready ???bad!!!
+    // Funkcja umożliwia wyswietlenie formularza do edycji
+    $('.users-in-table').on('click', function(e)
+    {
+        e.preventDefault();
+        var id = $(this).data('edituser');
+
+        $.post('http://www.dino.dev/app_dev.php/newadmin/ajax_edit_users',
+                {
+                    id: id
+                },
+                function (response) {
+                    if (response.code == 200 && response.success) {
+
+                        var parsedData =JSON.parse(response.content);
+                        var wrapper = $("#edit-dino-form");
+                        wrapper.empty();
+                        wrapper.html(parsedData);
+                        window.scrollTo(0,document.body.scrollHeight);
+                        saveChange(id);
+                    } else {
+                    }
+                }, "json");
+    });
+
+    //Funkcja zapisuje dane wprowadzone w formularzu
+    function saveChange(id)
+    {
+        $('.save_user_ajax').on('submit', function(e)
+        {
+            e.preventDefault();
+            var formType = 'parameters';
+            $.post('/app_dev.php/newadmin/ajax_save_user_change/'+id+'/'+formType, $(this).serialize(),
+                    function (response) {
+                        if (response.code == 200 && response.success) {
+
+                            var parsedData =JSON.parse(response.content);
+                            var wrapper = $("#tabello");
+                            var editDinoForm = $("#edit-dino-form");
+                            wrapper.empty();
+                            editDinoForm.empty();
+                            wrapper.html(parsedData);
+                            window.scrollTo(0,0);
+
+                        } else if(response.code == 400 && !response.success) {
+                            var parsedData =JSON.parse(response.content);
+                            var wrapper = $("#edit-dino-form");
+                            wrapper.empty();
+                            wrapper.html(parsedData);
+                            saveChange(id);
+                        }
+                    }, "json");
+        });
+    }
+
+</script>
+

@@ -1,0 +1,16 @@
+AdminShowUsersNew:
+    path: /newadmin/ajax_show_users
+    defaults: { _controller: AdminBundle:NewPanel:users}
+
+AdminShowDaschboardNew:
+    path: /newadmin/ajax_show_dashboard
+    defaults: { _controller: AdminBundle:NewPanel:daschboard}
+
+AdminEditUserNew:
+    path: /newadmin/ajax_edit_users
+    defaults: { _controller: AdminBundle:NewPanel:editUsers}
+
+Admin_save_user_changeNew:
+    path: /newadmin/ajax_save_user_change/{id}/{formType}
+    defaults: { _controller: AdminBundle:NewPanel:saveUsers}
+    methods: [POST|GET]

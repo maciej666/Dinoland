@@ -6,6 +6,7 @@ use AddUserDinoBundle\Test\ApiTestCase;
 
 /**
  * Testy Api z DinoApiController.
+ * Komenda: phpunit  src/AddUserDinoBundle/Tests/Controller/Api/PostControllerTest.php
  * @package AddUserDinoBundle\Tests\Controller\Api
  */
 class DinoApiControllerTest extends ApiTestCase

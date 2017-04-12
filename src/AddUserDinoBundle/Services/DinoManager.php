@@ -2,6 +2,7 @@
 
 namespace AddUserDinoBundle\Services;
 
+use AddUserDinoBundle\Entity\DinoImage;
 use Doctrine\ORM\EntityManager;
 use AddUserDinoBundle\Entity\DinoParameters;
 use AddUserDinoBundle\Entity\DinoMaterials;
@@ -152,8 +153,8 @@ class DinoManager
      * @param User $user
      * @return mixed
      */
-    public function showMaterials(User $user){
-
+    public function showMaterials(User $user)
+    {
         $dinoMaterialsId = $user->getMateria()->getId();
         $dino_materia = $this->em->getRepository('AddUserDinoBundle:DinoMaterials')->findOneById($dinoMaterialsId);
         $old_time_materials = $dino_materia->getUpdatedAt();
@@ -275,8 +276,8 @@ class DinoManager
      * @param User $user
      * @return array
      */
-    public function checkHomeRequirements(User $user){
-
+    public function checkHomeRequirements(User $user)
+    {
         $dinoMaterialsId = $user->getMateria()->getId();
         $dino_materia = $this->em->getRepository('AddUserDinoBundle:DinoMaterials')->findOneById($dinoMaterialsId);
 
@@ -331,6 +332,22 @@ class DinoManager
         }
 
         return $home;
+    }
+
+    /**
+     * Zwraca zdjęcie usera bądź tworzy nowe gdy go nie ma
+     * @param User $logged_user
+     * @return DinoImage
+     */
+    public function getImage(User $logged_user)
+    {
+        if (!$logged_user->getImage()) {
+            $dino_image = new DinoImage();
+        } else {
+            $dino_image = $logged_user->getImage();
+        }
+
+        return $dino_image;
     }
 
 }

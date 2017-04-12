@@ -251,3 +251,7 @@ footer .glyphicon {
     font-family: 'Tillana', cursive;
     /*font-weight: bold;*/
 }
+#dino-profile-image {
+    width: 40%;
+    height: 40%;
+}

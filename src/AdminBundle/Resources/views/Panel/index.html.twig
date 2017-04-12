@@ -292,8 +292,8 @@
                         <a href="#"  id="show_users"><i class="fa fa-bar-chart-o fa-fw"></i> Dino - konta </a>
                         <!-- second-level-items -->
                     </li>
-                     <li class="admin-menu">
-                        <a href="timeline.html"><i class="fa fa-flask fa-fw"></i>Dino - zasoby</a>
+                     <li class="admin-menu" data-menu="{{ path('AdminShowUsers') }}">
+                        <a href="#"><i class="fa fa-flask fa-fw"></i>Dino - zasoby</a>
                     </li>
                     <li class="admin-menu">
                         <a href="tables.html"><i class="fa fa-table fa-fw"></i>Forum</a>
@@ -321,8 +321,10 @@
         <!-- end page-wrapper -->
     </div>
     <!-- end wrapper -->
+    <!-- FOSJSRoutingbundle scripts -->
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <!-- Core Scripts - Include with every page -->
-
     <script src="{{ asset('bundles/admin/plugins/jquery-1.10.2.js') }}"></script>
     <script src="{{ asset('bundles/admin/plugins/bootstrap/bootstrap.min.js') }}"></script>
     <script src="{{ asset('bundles/admin/plugins/metisMenu/jquery.metisMenu.js') }}"></script>

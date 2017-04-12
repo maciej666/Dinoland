@@ -14,6 +14,9 @@ Add_dino_home:
     path: /dino_account/ajax_add_home
     defaults: { _controller: DinoBundle:Ajax:addHomeAjax}
 
+new_admin_panel:
+    resource: '@AdminBundle/Resources/config/routing.yml'
+
 AdminShowUsers:
     path: /admin/ajax_show_users
     defaults: { _controller: AdminBundle:Panel:users}
@@ -83,3 +86,5 @@ fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profile
 
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

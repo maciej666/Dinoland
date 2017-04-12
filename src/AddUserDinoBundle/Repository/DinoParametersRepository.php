@@ -16,6 +16,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class DinoParametersRepository extends \Doctrine\ORM\EntityRepository
 {
+    private function getQueryBuilder()
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->getRepository('AddUserDinoBundle:DinoParameters')
+            ->createQueryBuilder('p');
+
+        return $qb;
+    }
+
         /**
          * Tworzy obiekt DinoParameters i przypisuje mu startowe własności w zależności od wieku Dina
          * @param User $loggedUser
@@ -38,6 +47,18 @@ class DinoParametersRepository extends \Doctrine\ORM\EntityRepository
         $em->flush();
 
         return true;
+    }
+
+    public function findUserParameters($id) {
+
+        $qb = $this->getQueryBuilder()
+            ->select('p')
+            ->from('AddUserDinoBundle:User', 'u')
+            ->where('u.id = :val')
+            ->setParameter('val', $id)
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 
 

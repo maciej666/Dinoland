@@ -359,6 +359,10 @@ $(document).ready(function() {
     }
 
 
+    //Sprawdza mime/type dodawanego pliku przed dodaniem
+
+
+
 
 });
 

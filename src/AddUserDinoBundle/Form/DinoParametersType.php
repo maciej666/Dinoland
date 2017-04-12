@@ -21,7 +21,7 @@ class DinoParametersType extends AbstractType
             ->add('backup')
             ->add('speed')
             ->add('strength')
-//            ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
+            ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
 
         ;
     }

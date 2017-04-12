@@ -86,13 +86,6 @@ class DinoAdminType extends AbstractType
                 'attr' => ['data-help'  => 'W zależności od wieku Dinoid ma różne zdolności.']
             ))
             ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
-
-            ->add('dino', DinoParametersType::class, array(
-                    'data_class' => 'AddUserDinoBundle\Entity\DinoParameters')
-            )
-            ->add('materia', DinoMaterialsType::class, array(
-                    'data_class' => 'AddUserDinoBundle\Entity\DinoMaterials')
-            )
             ->remove('username')
 //            ->remove('plainPassword')
         ;

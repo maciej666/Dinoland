@@ -18,6 +18,7 @@ Stronka umożliwia tworzenie własnego dinozaura (/register) któremu można prz
 który gromadzi surowce pozwalające na wykup schronu dodającego bonusy (/dino_account).
 Zrobiłem też panel admina umożliwiający edycje usera, dina, jego surowców, ptk. mocy
 wraz z wyszukiwarką i możliwością sortowania(/admin/index - w zakładce Dino-konta).
+Na /newadmin/index znajduję się ten sam panel (lepiej działający) zrobiony w oparciu o jQuery datatables i ui.
 Zaczałem też robić RESTfull Api z testami jednostkowymi w oparciu o kurs z knpUniversity (DinoApiControllerTest.php).
 Strona nie jest jeszcze ukończona także zawiera parę mankamentów, jak np. konieczność podania hasła użytkownika
 przy zapisywaniu zmian do bazy daych w panelu admina, problem z przeniesieniem funkcji javascript
