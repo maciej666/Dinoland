@@ -122,3 +122,14 @@ vich_uploader:
                 inject_on_load:     false
                 delete_on_update:   true
                 delete_on_remove:   true
+
+waldo_datatable:
+    all:
+        search:           true
+    js:
+        pageLength: "10"
+        lengthMenu: [[5,10, 25, 50, -1], [5,10, 25, 50, 'All']]
+        dom: '<"clearfix"lf>rtip'
+        jQueryUI: "false"
+        language:
+                    url: "//cdn.datatables.net/plug-ins/1.10.9/i18n/Polish.json"

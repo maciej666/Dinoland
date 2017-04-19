@@ -1,8 +1,14 @@
 <script>
     ////tworzy datatables https://datatables.net/manual/installation
-    $('#admin_users_table').DataTable();
-    $('#admin_parameters_table').DataTable();
-    $('#admin_materials_table').DataTable();
+    $('#admin_users_table').DataTable({
+        responsive: true
+    });
+    $('#admin_parameters_table').DataTable({
+        responsive: true
+    });
+    $('#admin_materials_table').DataTable({
+        responsive: true
+    });
     // JQuery accordion
     $("#accordion_panels").accordion({
         collapsible: true, //żeby móc zamknąć wszystkie panele
@@ -51,6 +57,7 @@
                         window.scrollTo(0,document.body.scrollHeight);
                         saveChange(id);
                     } else {
+                        alert('odśwież stronę');
                     }
                 }, "json");
     });
@@ -61,7 +68,7 @@
         $('.save_user_ajax').on('submit', function(e)
         {
             e.preventDefault();
-            var formType = 'parameters';
+            var formType = $("span", this).data('formtype');
             $.post('/app_dev.php/newadmin/ajax_save_user_change/'+id+'/'+formType, $(this).serialize(),
                     function (response) {
                         if (response.code == 200 && response.success) {

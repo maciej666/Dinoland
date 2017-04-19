@@ -201,8 +201,12 @@ $(document).ready(function(){
                 submenu: 'ui-icon-circle-triangle-e'
             }
         });
-
-
+        //---------------------------MESSAGE BOX----------------------------------------
+    $('#boxxx').dialog({
+        title: 'Dinoland',
+        width: 400,
+        modal: true
+    }).height("auto");
 
 });
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- XXX\MyBundle\Resources\views\Module\index.html.twig -->
+
+    <!-- include the assets -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/dt-1.10.9/datatables.min.css"/>
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/r/dt/dt-1.10.9/datatables.min.js"></script>
+</head>
+<style scoped>
+    .fg-button {
+        color:orangered;
+        font-weight: bold;
+        padding: 5px;
+    }
+    .fg-button:hover {
+        cursor: pointer;
+    }
+</style>
+<body>
+
+<div class="container">
+    <div class="jumbotron">
+        {{ datatable({
+            'js' : {
+                'ajax' : path('datatable')
+            }
+        })
+        }}
+    </div>
+</div>
+
+</body>
+</html>

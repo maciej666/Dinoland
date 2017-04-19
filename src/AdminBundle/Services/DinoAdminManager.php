@@ -71,16 +71,10 @@ class DinoAdminManager
             return [$editForm, 'materials'];
 
         } else if ($formType == 'user') {
-            $editForm = $this->form->create(DinoAdminType::class, $user);
+            $editForm = $this->form->create(UserType::class, $user);
             $editForm->handleRequest($request);
 
             if ($editForm->isValid()) {
-//              ponowne zapiywanie starego hasła!!!?
-//                $pass = $user->getPassword();
-//                $pass = $this->container->get('security.password_encoder')
-//                    ->encodePassword($user, $pass);
-//                $user->setPassword($pass);
-//
                 $this->em->persist($user);
                 $this->em->flush();
             }
@@ -108,7 +102,7 @@ class DinoAdminManager
         $parameters = $user->getDino();
 
         $forms = [];
-        $editUserForm = $this->form->create(DinoAdminType::class, $user);
+        $editUserForm = $this->form->create(UserType::class, $user);
         $editParametersForm = $this->form->create(DinoParametersType::class, $parameters);
         $editMaterialsForm = $this->form->create(DinoMaterialsType::class, $materials);
         if ($editForm[1] == 'user') {

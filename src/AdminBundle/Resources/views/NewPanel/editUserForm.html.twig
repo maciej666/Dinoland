@@ -16,7 +16,8 @@
         <h3> Dane użytkownika </h3>
         <div id="edit_user_form">
         {{ form_start(editUserForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
-
+            {#info o tym który formularz jest edytowany#}
+            <span data-formtype="user"></span>
         {{ form_row(editUserForm.email) }}
         {{ form_row(editUserForm.name) }}
         {{ form_row(editUserForm.species) }}
@@ -28,7 +29,7 @@
         <h3> Dino-surowce</h3>
         <div id="edit_materials_form">
         {{ form_start(editMaterialsForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
-
+            <span  data-formtype="materials"></span>
         {{ form_row(editMaterialsForm.wood) }}
         {{ form_row(editMaterialsForm.stone) }}
         {{ form_row(editMaterialsForm.bone) }}
@@ -41,7 +42,7 @@
         <h3> Dino-umiejętności</h3>
         <div id="edit_parmaters_form">
         {{ form_start(editParametersForm, {'attr': {'class': 'save_user_ajax', 'novalidate': 'novalidate' }}) }}
-
+            <span data-formtype="parameters"></span>
         {{ form_row(editParametersForm.health) }}
         {{ form_row(editParametersForm.backup) }}
         {{ form_row(editParametersForm.speed) }}

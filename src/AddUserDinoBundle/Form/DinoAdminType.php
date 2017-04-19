@@ -87,7 +87,7 @@ class DinoAdminType extends AbstractType
             ))
             ->add('submit', SubmitType::class, array('label' => 'Edytuj'))
             ->remove('username')
-//            ->remove('plainPassword')
+            ->remove('plainPassword')
         ;
     }
 

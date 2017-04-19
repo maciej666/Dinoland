@@ -6,6 +6,7 @@ use AddUserDinoBundle\Entity\DinoMaterials;
 use AddUserDinoBundle\Entity\DinoParameters;
 use AddUserDinoBundle\Form\DinoMaterialsType;
 use AddUserDinoBundle\Form\DinoParametersType;
+use AddUserDinoBundle\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AddUserDinoBundle\Entity\User;
 use AddUserDinoBundle\Form\DinoAdminType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class PanelController
@@ -100,7 +102,7 @@ class NewPanelController extends Controller
         /** @var DinoParameters */
         $parameters = $user->getDino();
 
-        $editUserForm = $this->createAdminForm($user, DinoAdminType::class, $id);
+        $editUserForm = $this->createAdminForm($user, UserType::class, $id);
         $editParametersForm = $this->createAdminForm($parameters, DinoParametersType::class, $id);
         $editMaterialsForm = $this->createAdminForm($materials, DinoMaterialsType::class, $id);
 
@@ -200,6 +202,15 @@ class NewPanelController extends Controller
         }
     }
 
+    /**
+     * @Route("/loadAjaxMaterials", name="loadAjaxMaterials")
+     * @Template
+     */
+    public function loadMaterialsByAjax()
+    {
+        //
+    }
+
 
     /**
      * Tworzenie akcji na podstawie encji, odpowiedniego formularza i id edytowanego usera
@@ -215,5 +226,6 @@ class NewPanelController extends Controller
             'method' => 'POST',
         ));
     }
+
 
 }
