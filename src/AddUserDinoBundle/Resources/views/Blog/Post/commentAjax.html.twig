@@ -1,0 +1,19 @@
+{% for comment in fresh_comments  %}
+    <span class="comments-date" data-last="{{  comment.createdAt | date("Y.m.d.H.i.s")  }}"></span>
+    <div class="col-sm-2 text-center">
+        {% if comment.id != null %}
+            <img src="/images/dinos/{{ comment.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>
+        {% else %}
+            <img src="{{ asset('bundles/adduserdino/image/blog_logo.png') }}" class="img-circle" height="65" width="65" alt="Dino"/>
+        {% endif %}
+    </div>
+    <div class="col-sm-10">
+        {% if comment.id != null %}
+            <h4><small>Użytkownik&nbsp;</small><a href="posty_autora">{{ comment.authorName }}</a>&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
+        {% else %}
+            <h4><small>Anonim&nbsp;</small>{{ comment.authorName }}&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
+        {% endif %}
+        <p>{{ comment.body }}</p>
+        <br>
+    </div>
+{% endfor %}

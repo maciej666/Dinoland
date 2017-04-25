@@ -4,6 +4,7 @@ namespace AddUserDinoBundle\Entity\Blog;
 
 use AddUserDinoBundle\Entity\Timestampable;
 use AddUserDinoBundle\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -67,6 +68,14 @@ class Post extends Timestampable
      * @Assert\NotBlank(message="Nie ma posta bez autora")
      */
     private $user;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AddUserDinoBundle\Entity\Blog\Comment", mappedBy="post")
+     * @ORM\OrderBy({"createdAt" = "DESC"})
+     */
+    private $comments;
 
     /**
      * Get id
@@ -156,6 +165,22 @@ class Post extends Timestampable
     public function setSlug($slug)
     {
         $this->slug = $slug;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param ArrayCollection $comments
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
     }
 }
 

@@ -121,6 +121,14 @@ class User extends BaseUser
 
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AddUserDinoBundle\Entity\Blog\Comment", mappedBy="user")
+     */
+    private $comments;
+
+
+    /**
      * @var DinoImage
      *
      * @ORM\OneToOne(targetEntity="AddUserDinoBundle\Entity\DinoImage", inversedBy="user")
@@ -128,6 +136,14 @@ class User extends BaseUser
      * @ORM\JoinColumn(name="image_id", referencedColumnName="id")
      */
     private $image;
+
+
+    public function __construct()
+    {
+        parent::__construct();
+        // your own logic
+    }
+
 
     /**
      * @return DinoImage
@@ -143,13 +159,6 @@ class User extends BaseUser
     public function setImage($image)
     {
         $this->image = $image;
-    }
-
-
-    public function __construct()
-    {
-        parent::__construct();
-        // your own logic
     }
 
 
@@ -307,5 +316,20 @@ class User extends BaseUser
         $this->posts = $posts;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param ArrayCollection $comments
+     */
+    public function setComments($comments)
+    {
+        $this->comments = $comments;
+    }
 
 }

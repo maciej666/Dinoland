@@ -44,3 +44,7 @@ services:
         class: AddUserDinoBundle\Entity\DinoParameters
         arguments: ['%kernel.root_dir%']
 
+    twig.extension.sortbyfield:
+        class: Snilius\Twig\SortByFieldExtension
+        tags:
+            - { name: twig.extension }

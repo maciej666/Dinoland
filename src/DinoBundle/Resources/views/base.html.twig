@@ -14,6 +14,8 @@
     {#<script src="{{ asset('bundles/dino/js/myJavaScripts.js') }}"></script>#}
     <link href="{{ asset('bundles/dino/style/style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Tillana" rel="stylesheet">
+    {% block style %}
+    {% endblock %}
 </head>
 <body id="myPage" data-spy="scroll" {% block ajax %} {% endblock %} data-target=".navbar" data-offset="60">
 
@@ -31,8 +33,8 @@
 
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#about">O GRZE</a></li>
-                <li><a href="#services">DINY W PARKU</a></li>
-                <li><a href="#pricing">FORUM</a></li>
+                <li><a href={{ path('dino_account') }}>DINY W PARKU</a></li>
+                <li><a href={{ path('blog_post_index') }}>BLOG</a></li>
                 <li><a href="#contact">SKLEP</a></li>
                 {% if app.user is null %}
                 <li><a href={{ path('fos_user_security_login') }}>ZALOGUJ</a></li>
@@ -58,14 +60,17 @@
 
 
 
-
+{% block footer %}
 <footer class="container-fluid text-center">
     <a href="#myPage" title="To Top">
         <span class="glyphicon glyphicon-chevron-up"></span>
     </a>
     <p>Dinopodia &copy; Szablon zjedzony dzięki łasce platformy bootstrap: <a href="http://www.w3schools.com" title="Visit w3schools">www.w3schools.com</a></p>
 </footer>
+{% endblock %}
 
+{% block javascripts %}
+{% endblock %}
 <script>
     $(document).ready(function(){
         // Add smooth scrolling to all links in navbar + footer link

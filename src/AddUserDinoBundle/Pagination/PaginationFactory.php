@@ -21,16 +21,16 @@ class PaginationFactory implements PagerfantaInterface
         $this->router = $router;
     }
 
-    public function createCollection(QueryBuilder $qb, Request $request, $route, $routeParams = array())
+    public function createCollection(QueryBuilder $qb, Request $request, $route, $routeParams = array(), $NbPerPage = 10)
     {
         //wartość domyślna ustawiona na pierwszą stronę
         $page = $request->query->get('page', 1);
 
         //tworzy obiekt pagerFanta // dziwne ale nie wiedzialem jak zrobic aby uniknąć redundanti
-        $pagerfanta = $this->createPagerFanta($qb, $request, $route, $routeParams)[0];
+        $pagerfanta = $this->createPagerFanta($qb, $request, $route, $routeParams, $NbPerPage)[0];
 
         //tworzy filtr z linkami
-        $createLinkUrl = $this->createPagerFanta($qb, $request, $route, $routeParams)[1];
+        $createLinkUrl = $this->createPagerFanta($qb, $request, $route, $routeParams, $NbPerPage)[1];
 
         //aby mieć array'a z obiektami user
         $users = array();
@@ -58,13 +58,13 @@ class PaginationFactory implements PagerfantaInterface
             return $paginatedCollection;
     }
 
-    public function createPagerFanta(QueryBuilder $qb, Request $request, $route, $routeParams = array())
+    public function createPagerFanta(QueryBuilder $qb, Request $request, $route, $routeParams = array(), $NbPerPage)
     {
         $page = $request->query->get('page', 1);
 
         $adapter = new DoctrineORMAdapter($qb);
         $pagerfanta = new Pagerfanta($adapter);
-        $pagerfanta->setMaxPerPage(10);
+        $pagerfanta->setMaxPerPage($NbPerPage);
         $pagerfanta->setCurrentPage($page);
 
         //filtr służy do szczegółowego wyszukiwania

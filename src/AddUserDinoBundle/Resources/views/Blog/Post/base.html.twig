@@ -1,0 +1,53 @@
+{% extends 'DinoBundle::base.html.twig' %}
+{% block style %}
+    <link href="{{ asset('bundles/adduserdino/css/myblog.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row content">
+        {% for type,messages in app.session.flashbag.all() %}
+            {% for msg in messages %}
+                <div class="alert alert-{{ type }}">{{ msg }}</div>
+            {% endfor %}
+        {% endfor %}
+        <div id="blog-menu" class="col-sm-3 sidenav">
+            <h4>Kategorie</h4>
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#section1">Dino-schrony</a></li>
+                <li><a href="#section2">Diny</a></li>
+                <li><a href="#section3">Dino punkty</a></li>
+                <li><a href="#section3">Rozgrywka</a></li>
+            </ul><br>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search Blog..">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                      <span class="glyphicon glyphicon-search"></span>
+                  </button>
+                </span>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function() {
+//                $('.col-sm-3:first').addClass('fadeout');
+//                $('.col-sm-3:first').after('<div class="fadeout"></div>');
+
+            });
+        </script>
+        {% block blog_content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+    <footer class="container-fluid" style="text-align: center;">
+        <p>Dinopodia &copy; Szablon zjedzony dzięki łasce platformy bootstrap: <a href="http://www.w3schools.com" title="Visit w3schools" style="color: lightgray; ">www.w3schools.com</a></p>
+    </footer>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('bundles/adduserdino/js/myblogjs.js') }}"></script>
+{% endblock %}

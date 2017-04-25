@@ -2,10 +2,13 @@
 
 namespace AddUserDinoBundle\Controller\Blog;
 
+use AddUserDinoBundle\Entity\Blog\Comment;
 use AddUserDinoBundle\Entity\Blog\Post;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Post controller.
@@ -18,6 +21,7 @@ class PostController extends Controller
      * Lists all post entities.
      *
      * @Route("/posts", name="blog_post_index")
+     * @Template
      * @Method("GET")
      */
     public function indexAction(Request $request)
@@ -29,17 +33,18 @@ class PostController extends Controller
             ->findAllPostsQueryBuilder($filter);
 
         $pagerFanta = $this->get('pagination_factory')
-            ->createPagerFanta($qb, $request, 'blog_post_index')[0];
-//        dump($paginatedCollection);die;
-        return $this->render('blog/post/index.html.twig', array(
+            ->createPagerFanta($qb, $request, 'blog_post_index', array(), 5)[0];
+
+        return array(
             'paginatedCollection' => $pagerFanta
-        ));
+        );
     }
 
     /**
      * Creates a new post entity.
      *
      * @Route("/new/post", name="blog_post_new")
+     * @Template
      * @Method({"GET", "POST"})
      */
     public function newAction(Request $request)
@@ -59,32 +64,34 @@ class PostController extends Controller
             return $this->redirectToRoute('blog_post_show', array('slug' => $post->getSlug()));
         }
 
-        return $this->render('blog/post/new.html.twig', array(
+        return array(
             'post' => $post,
             'form' => $form->createView(),
-        ));
+        );
     }
 
     /**
      * Finds and displays a post entity.
      *
      * @Route("/post/{slug}", name="blog_post_show")
+     * @Template
      * @Method("GET")
      */
-    public function showAction(Post $post)
+    public function showAction(Request $request, Post $post)
     {
-        $deleteForm = $this->createDeleteForm($post);
+        $form = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
 
-        return $this->render('blog/post/show.html.twig', array(
+        return array(
+            'form' => $form->createView(),
             'post' => $post,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        );
     }
 
     /**
      * Displays a form to edit an existing post entity.
      *
      * @Route("/post/{slug}/edit", name="blog_post_edit")
+     * @Template
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, Post $post)
@@ -100,17 +107,18 @@ class PostController extends Controller
             return $this->redirectToRoute('blog_post_edit', array('slug' => $post->getSlug()));
         }
 
-        return $this->render('blog/post/edit.html.twig', array(
+        return array(
             'post' => $post,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        ));
+        );
     }
 
     /**
      * Deletes a post entity.
      *
      * @Route("/post/{slug}", name="blog_post_delete")
+     *
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, Post $post)
@@ -128,6 +136,40 @@ class PostController extends Controller
 
         return $this->redirectToRoute('blog_post_index');
     }
+
+
+    /**
+     * Creates comment.
+     *
+     * @Route("/{slug}/comment/create", name="blog_create_comment")
+     *
+     * @Method("POST")
+     */
+    public function createCommentAction(Request $request, $slug)
+    {
+        $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:Blog\Post');
+        $post = $repository->findOneBySlug($slug);
+        $user = $this->getUser();
+
+        if(!$post) {
+            throw new HttpException('Nie ma takiego posta');
+        }
+
+        $form = $this->container->get('dino_blog_manager')->createComment($post, $request, $user);
+        if (true === $form){
+            $this->get('session')->getFlashBag()->add('success', 'Dodano komentarz');
+
+            return $this->redirect($this->generateUrl('blog_post_show', array(
+                'slug' => $post->getSlug()
+            )));
+        }
+        return $this->redirect($this->generateUrl('blog_post_show', array(
+            'slug' => $slug,
+            'post' => $post,
+            'form' => $form->createView()
+        )));
+    }
+
 
     /**
      * Creates a form to delete a post entity.

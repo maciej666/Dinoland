@@ -1,11 +1,12 @@
-parameters:
-  dinoUser_manager.class: AddUserDinoBundle\Services\DinoManager
-
 services:
     dino_manager:
-        class: '%dinoUser_manager.class%'
+        class: AddUserDinoBundle\Services\DinoManager
         arguments: ["@doctrine.orm.entity_manager" ]
 
     dino_test:
         class: AddUserDinoBundle\Tests\Controller\Api\DinoApiControllerTest
         arguments: ["@jms_serializer"]
+
+    dino_blog_manager:
+        class: AddUserDinoBundle\Services\DinoBlogManager
+        arguments: ["@doctrine.orm.entity_manager", "@form.factory"]

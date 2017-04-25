@@ -1,0 +1,3 @@
+AdminEditUserNew:
+    path: /blog/load_fresh_comments
+    defaults: { _controller: AddUserDinoBundle:Blog/Comment:loadComments}

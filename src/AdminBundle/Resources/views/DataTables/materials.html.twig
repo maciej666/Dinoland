@@ -28,9 +28,37 @@
 
 <div class="container">
     <div class="jumbotron">
-        {{ datatable({
+        {{
+        datatable({
+            'id' : 'materials',
             'js' : {
-                'ajax' : path('datatable')
+                'ajax' : path('materials_datatable')
+            }
+        })
+        }}
+
+        </br>
+        </br>
+        </br>
+
+        {{
+        datatable({
+            'id' : 'parameters',
+            'js' : {
+                'ajax' : path('parameters_datatable')
+            }
+        })
+        }}
+
+        </br>
+        </br>
+        </br>
+
+        {{
+        datatable({
+            'id' : 'users',
+            'js' : {
+                'ajax' : path('users_datatable')
             }
         })
         }}

@@ -17,7 +17,10 @@ parameters:
 services:
     fos_user.doctrine_registry:
         alias: doctrine
-
+    twig.extension.text:
+         class: Twig_Extensions_Extension_Text
+         tags:
+             - { name: twig.extension }
 
 framework:
     #esi:             ~
@@ -133,3 +136,9 @@ waldo_datatable:
         jQueryUI: "false"
         language:
                     url: "//cdn.datatables.net/plug-ins/1.10.9/i18n/Polish.json"
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~

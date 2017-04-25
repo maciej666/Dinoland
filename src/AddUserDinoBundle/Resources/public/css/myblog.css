@@ -1,0 +1,93 @@
+/*----------------- Style z templatki bloga ----------------*/
+/* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+.row.content {height: 700px}
+
+/* Set gray background color and 100% height */
+.sidenav {
+    background-color: #f1f1f1;
+    height: 100%;
+}
+
+/* Set black background color, white text and some padding */
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
+    }
+    .row.content {height: auto;}
+}
+
+/*------- myrow pozwala na umieszczenie elementu na dole diva --------*/
+
+.myrow {
+    font-size: 0;
+}
+.myrow > * {
+    float: none;
+    display: inline-block;
+    font-size: 14px; /* if using LESS it's quicker to just use @font-size-base */
+}
+.myrow > *:last-child {
+    vertical-align: bottom;
+}
+.myrow h4:last-child {
+    margin-bottom: 0; /* optional */
+}
+.myrow span {
+    margin-bottom: 0; /* optional */
+}
+
+#show-panel {
+    cursor: e-resize;
+    height: 700px;
+    margin-top: 60px;
+    width: 40px;
+    background-color: #f1f1f1;
+}
+
+/*--------- http://stackoverflow.com/questions/11837606/fading-out-text-at-bottom-of-a-section-with-transparent-div-but-height-stays-un*/
+.fadeout {
+    position: relative;
+    bottom: 4em;
+    height: 4em;
+    background: -webkit-linear-gradient(
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 1) 100%
+    );
+}
+
+@media screen and (max-width: 767px) {
+    #show-panel {
+        cursor: s-resize;
+        height: 40px;
+        margin-top: 30px;
+        width: 100%;
+        background-color: #f1f1f1;
+    }
+    #blog-menu {
+        cursor: n-resize;
+    }
+    .fadeout {
+        position: relative;
+        bottom: 2em;
+        height: 2em;
+        background: -webkit-linear-gradient(
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 1) 100%
+        );
+    }
+
+}
+
+/*---------------Stylizacja formularza komentarzy------------------*/
+
+.comment-body {
+
+}

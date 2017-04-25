@@ -42,6 +42,9 @@ Show_result_of_admin_search:
     path: /admin/ajax_show_search
     defaults: { _controller: AdminBundle:Panel:search}
 
+add_user_dino_routes:
+    resource: '@AddUserDinoBundle/Resources/config/routing.yml'
+
 api_login_check:
     path: /api/login_check
 
