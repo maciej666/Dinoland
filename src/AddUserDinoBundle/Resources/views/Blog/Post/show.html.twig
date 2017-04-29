@@ -1,9 +1,48 @@
 {% extends 'AddUserDinoBundle:Blog/Post:base.html.twig' %}
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 {% block blog_content %}
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+    {% macro menu_links(htmltree, form2) %}
+        {% import _self as macros %}
+        {% for comment in htmltree %}
+            <li>
+                <span class="comments-date" data-last="{{  comment.createdAt | date("Y.m.d.H.i.s")  }}"></span>
+                <span class="comments-id" data-id="{{comment.id }}"></span>
+                <div class="col-sm-2 text-center" >
+                    {% if comment.user != null %}
+                    <img src="/images/dinos/{{ comment.user.image.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>
+                    {% else %}
+                    <img src="{{ asset('bundles/adduserdino/image/blog_logo.png') }}" class="img-circle" height="65" width="65" alt="Dino"/>
+                    {% endif %}
+                </div>
+                <div class="col-sm-10" style="padding-bottom: 60px;" >
+                    {% if comment.user != null %}
+                    <h4><small>Użytkownik&nbsp;</small><a href="posty_autora">{{ comment.authorName }}</a>&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
+                    {% else %}
+                    <h4><small>Anonim&nbsp;</small>{{ comment.authorName }}&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
+                    {% endif %}
+                    <p>{{ comment.body }}</p>
+                    {% if comment.__children %}
+                    <span class="show-commment-form" style="font-weight: bold; cursor: move; color: mediumpurple;">Odpowiedz |&nbsp;</span>
+                    <span class="show-commment-response" style="font-weight: bold; cursor: move; color: lightgreen;">&nbsp;| Pokaż odpowiedzi</span>
+                    {% endif %}
+                </div>
+                {% if comment.__children %}
+                    <ul id="child" style="display: none; margin-left: 150px; " >
+                        {{ macros.menu_links(comment.__children) }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+    {% endmacro %}
+
     <div class="col-sm-9">
         {#jak umieścić text na dnie div'a: http://jsfiddle.net/silb3r/0srp42pb/11/#}
-            <h2>{{ post.title }}</h2>
+        <h2>{{ post.title }}</h2>
             <h5><span class="glyphicon glyphicon-time"></span> Dodano przez {{ post.user.name }}, {{ post.createdAt | date("m/d/Y")}}.</h5>
             <h5><span class="label label-danger">Food</span> <span class="label label-primary">Ipsum</span></h5><br>
             <p>{{ post.body }}</p>
@@ -11,7 +50,7 @@
             <br><br>
 
             <h4>Dodaj Komentarz:</h4>
-            {{ form_start(form, {'action': path('blog_create_comment', {slug: post.slug}), 'method': 'POST'}) }}
+            {{ form_start(form) }}
             {% if app.user != null %}
             {{ form_row(form.authorName, {'value': app.user.name}) }}
             {% else %}
@@ -24,45 +63,34 @@
             <p><span class="badge">{{ post.comments | length }}</span> Komentarze:</p><br>
 
             <div id="comments-block" class="row">
-                {% for comment in post.comments  %}
-                    <span class="comments-date" data-last="{{  comment.createdAt | date("Y.m.d.H.i.s")  }}"></span>
-                <div class="col-sm-2 text-center">
-                    {% if comment.user != null %}
-                    <img src="/images/dinos/{{ comment.user.image.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>
+                {% import _self as macros %}
+                <ul class="main-menu">
+                    {{ macros.menu_links(htmltree) }}
+                </ul>
+
+                <div id='comment-form' class='panel-group' style="display: none; margin-top: 20px;" >
+                    {{ form_start(form2, {'attr': {'class': 'save_comment_form', 'novalidate': 'novalidate'}}) }}
+                    {% if app.user != null %}
+                        {{ form_row(form2.authorName, {'value': app.user.name}) }}
                     {% else %}
-                    <img src="{{ asset('bundles/adduserdino/image/blog_logo.png') }}" class="img-circle" height="65" width="65" alt="Dino"/>
+                        {{ form_row(form2.authorName) }}
                     {% endif %}
+                    {{ form_row(form2.body, {'attr': {'class': 'form-control', 'rows': 3 }}) }}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            {{ form_row(form2.submit) }}
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-0 col-md-offset-1">
+                            <span class="cover-comment-form" style="font-weight: bold; color:darkred; cursor: move;">schowaj&nbsp;</span><span class="cover-comment-form glyphicon glyphicon-eject" style="font-weight: bold; color:darkred; cursor: move;"></span>
+                        </div>
+                    </div>
+                    {{ form_end(form2) }}
                 </div>
-                <div class="col-sm-10">
-                    {% if comment.user != null %}
-                    <h4><small>Użytkownik&nbsp;</small><a href="posty_autora">{{ comment.authorName }}</a>&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
-                    {% else %}
-                    <h4><small>Anonim&nbsp;</small>{{ comment.authorName }}&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
-                    {% endif %}
-                    <p>{{ comment.body }}</p>
-                    <br>
-                </div>
-                {% endfor %}
             </div>
     </div>
     <script>
+
         $(document).ready(function() {
-            $('.col-sm-3:first').hide();
-            $('.col-sm-9:first').before('<div id="show-panel" class="col-sm-1 fadeout"></div>');
-
-            $('#show-panel').click(function() {
-                $('.col-sm-3:first').show(1000);
-                $('.col-sm-3:first').css('cursor', 'w-resize');
-                $(this).hide(1000);
-            });
-
-            $('.col-sm-3:first').click(function() {
-                $('#show-panel').show(1000);
-                $(this).hide(1000);
-            });
-
-
-
 
         });
     </script>

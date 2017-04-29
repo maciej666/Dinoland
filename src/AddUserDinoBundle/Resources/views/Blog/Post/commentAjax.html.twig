@@ -1,19 +1,49 @@
+{#{% for comment in fresh_comments  %}#}
+    {#<span class="comments-date" data-last="{{  comment.createdAt | date("Y.m.d.H.i.s")  }}"></span>#}
+    {#<div class="col-sm-2 text-center">#}
+        {#{% if comment.id != null %}#}
+            {#<img src="/images/dinos/{{ comment.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>#}
+        {#{% else %}#}
+            {#<img src="{{ asset('bundles/adduserdino/image/blog_logo.png') }}" class="img-circle" height="65" width="65" alt="Dino"/>#}
+        {#{% endif %}#}
+    {#</div>#}
+    {#<div class="col-sm-10">#}
+        {#{% if comment.id != null %}#}
+            {#<h4><small>Użytkownik&nbsp;</small><a href="posty_autora">{{ comment.authorName }}</a>&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>#}
+        {#{% else %}#}
+            {#<h4><small>Anonim&nbsp;</small>{{ comment.authorName }}&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>#}
+        {#{% endif %}#}
+        {#<p>{{ comment.body }}</p>#}
+        {#<br>#}
+    {#</div>#}
+{#{% endfor %}#}
+
 {% for comment in fresh_comments  %}
     <span class="comments-date" data-last="{{  comment.createdAt | date("Y.m.d.H.i.s")  }}"></span>
-    <div class="col-sm-2 text-center">
-        {% if comment.id != null %}
-            <img src="/images/dinos/{{ comment.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>
+    <li style="list-style-type: none;">
+    <div class="col-sm-2 text-center" >
+        {% if comment.user != null %}
+            <img src="/images/dinos/{{ comment.user.image.imageName }}" class="img-circle" height="65" width="65" alt="Dino"/>
         {% else %}
             <img src="{{ asset('bundles/adduserdino/image/blog_logo.png') }}" class="img-circle" height="65" width="65" alt="Dino"/>
         {% endif %}
     </div>
-    <div class="col-sm-10">
-        {% if comment.id != null %}
+    <div class="col-sm-10" style="padding-bottom: 60px;" >
+        {% if comment.user != null %}
             <h4><small>Użytkownik&nbsp;</small><a href="posty_autora">{{ comment.authorName }}</a>&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
         {% else %}
             <h4><small>Anonim&nbsp;</small>{{ comment.authorName }}&nbsp;<small>{{ comment.createdAt | date("H:i:s | m/d/Y") }}</small></h4>
         {% endif %}
         <p>{{ comment.body }}</p>
-        <br>
+        <span class="show-commment-form" style="font-weight: bold; cursor: move; color: mediumpurple;">Odpowiedz |&nbsp;</span>
+        {% if comment.__children %}
+            <span class="show-commment-response" style="font-weight: bold; cursor: move; color: lightgreen;">&nbsp;| Pokaż odpowiedzi</span>
+        {% endif %}
     </div>
+    {% if comment.__children %}
+        <ul id="child" style="display: none; margin-left: 150px; " >
+            {{ macros.menu_links(comment.__children) }}
+        </ul>
+    {% endif %}
+</li>
 {% endfor %}

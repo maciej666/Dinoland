@@ -62,9 +62,11 @@ class CommentController extends Controller
     {
         $last_comment = $request->request->get('last_comment');
         $post_id = $request->request->get('post_id');
-
         $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:Blog\Comment');
-        $fresh_comments = $repository->getFreshComments($post_id, $last_comment);
+        $fresh_comments = $repository->getFreshCommentsTree($post_id, $last_comment);
+
+        $check_parent = $this->container->get('dino_blog_manager')->whatever($fresh_comments, 'lft', '2');
+        dump($fresh_comments, $check_parent);die;
 
         $template = $this->render('AddUserDinoBundle:Blog/Post:commentAjax.html.twig',array(
             'fresh_comments' => $fresh_comments,
@@ -77,6 +79,7 @@ class CommentController extends Controller
                 "code" => 200, //200 z jakiegoś powodu nie działa??
                 "success" => true,
                 "content" => $content,
+                "child_comments" => $child_comments
             ));
             $response->headers->set('Content-Type', 'application/json');
 

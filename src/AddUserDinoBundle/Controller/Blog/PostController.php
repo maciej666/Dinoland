@@ -80,10 +80,52 @@ class PostController extends Controller
     public function showAction(Request $request, Post $post)
     {
         $form = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
+        $form2 = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
 
+//        $user = $this->getUser();
+//        $post = new Post();
+//        $post->setUser($user);
+//        $post->setTitle('post test');
+//        $post->setBody('o ho');
+//        $c1 = new Comment();
+//        $c1->setAuthorName('parent');
+//        $c1->setBody('parent body');
+//        $c1->setUser($user);
+//        $c1->setPost($post);
+//
+//        $c2 = new Comment();
+//        $c2->setAuthorName('child');
+//        $c2->setBody('child body');
+//        $c2->setUser($user);
+//        $c2->setPost($post);
+//        $c2->setParent($c1);
+
+//        $em->persist($post);
+//        $em->persist($user);
+//        $em->persist($c1);
+//        $em->persist($c2);
+//        $em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('AddUserDinoBundle:Blog\Comment');
+
+        $query = $em
+            ->createQueryBuilder()
+            ->select('node', 'u', 'i')
+            ->from('AddUserDinoBundle:Blog\Comment', 'node')
+            ->leftJoin('node.user', 'u')
+            ->leftJoin('u.image', 'i')
+            ->orderBy('node.createdAt', 'DESC')
+            ->getQuery()
+        ;
+        $tree = $repo->buildTree($query->getArrayResult());
+
+//        $htmlTree = $repo->childrenHierarchy();
+//        dump($tree);die;
         return array(
             'form' => $form->createView(),
+            'form2' => $form2->createView(),
             'post' => $post,
+            'htmltree' => $tree,
         );
     }
 
@@ -141,14 +183,18 @@ class PostController extends Controller
     /**
      * Creates comment.
      *
-     * @Route("/{slug}/comment/create", name="blog_create_comment")
+     * @Route("/comment/create/{id}/{parent_id}", name="blog_create_comment")
      *
      * @Method("POST")
      */
-    public function createCommentAction(Request $request, $slug)
+    public function createCommentAction(Request $request)
     {
+        $id = $request->get('id');
+        $parent_id = $request->get('parent_id');
+        dump($parent_id);die;
         $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:Blog\Post');
-        $post = $repository->findOneBySlug($slug);
+        $post = $repository->findOneById($id);
+        $slug = $post->getSlug();
         $user = $this->getUser();
 
         if(!$post) {
@@ -156,6 +202,7 @@ class PostController extends Controller
         }
 
         $form = $this->container->get('dino_blog_manager')->createComment($post, $request, $user);
+
         if (true === $form){
             $this->get('session')->getFlashBag()->add('success', 'Dodano komentarz');
 

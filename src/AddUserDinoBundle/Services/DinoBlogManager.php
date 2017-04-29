@@ -55,4 +55,20 @@ class DinoBlogManager
         return $form;
     }
 
+    /**
+     * Sprawdza czy tablica ma podaną parę wartośc klucz
+     * @param $array
+     * @param $key
+     * @param $val
+     * @return bool
+     */
+    public function whatever($array, $key, $val) {
+        foreach ($array as $item)
+            if (isset($item[$key]) && $item[$key] == $val)
+                return true;
+        return false;
+    }
+
+
+
 }

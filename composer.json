@@ -36,7 +36,9 @@
         "waldo/datatable-bundle": "^4.0",
         "twig/extensions": "^1.4",
         "snilius/twig-sort-by-field": "^0.1.5",
-        "symfony/assetic-bundle": "^2.8"
+        "symfony/assetic-bundle": "^2.8",
+        "accesto/payum-pay-u": "dev-master",
+        "payum/payum-bundle": "1.0.x-dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

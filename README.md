@@ -20,10 +20,8 @@ Zrobiłem też panel admina umożliwiający edycje usera, dina, jego surowców, 
 wraz z wyszukiwarką i możliwością sortowania(/admin/index - w zakładce Dino-konta).
 Na /newadmin/index znajduję się ten sam panel (lepiej działający) zrobiony w oparciu o jQuery datatables i ui.
 Zaczałem też robić RESTfull Api z testami jednostkowymi w oparciu o kurs z knpUniversity (DinoApiControllerTest.php).
-Strona nie jest jeszcze ukończona także zawiera parę mankamentów, jak np. konieczność podania hasła użytkownika
-przy zapisywaniu zmian do bazy daych w panelu admina, problem z przeniesieniem funkcji javascript
-do osobnego pliku (my-script-admin.js i myJavaScript.js),
-redundantny kod, zwłaszcza javascript... :)
+Strona nie jest jeszcze ukończona także zawiera parę mankamentów, jak np. problem z dodawaniem komentarzy do drzewa
+za pomocą ajax'a, redundantny kod, zwłaszcza javascript... :)
 Miłego przeglądania.
 
 Pozdrawiam serdecznie,

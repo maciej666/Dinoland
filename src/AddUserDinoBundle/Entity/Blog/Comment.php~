@@ -288,49 +288,5 @@ class Comment extends Timestampable
     {
         $this->slug = $slug;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Set root
-     *
-     * @param \AddUserDinoBundle\Entity\Blog\Comment $root
-     *
-     * @return Comment
-     */
-    public function setRoot(\AddUserDinoBundle\Entity\Blog\Comment $root = null)
-    {
-        $this->root = $root;
-
-        return $this;
-    }
-
-    /**
-     * Add child
-     *
-     * @param \AddUserDinoBundle\Entity\Blog\Comment $child
-     *
-     * @return Comment
-     */
-    public function addChild(\AddUserDinoBundle\Entity\Blog\Comment $child)
-    {
-        $this->children[] = $child;
-
-        return $this;
-    }
-
-    /**
-     * Remove child
-     *
-     * @param \AddUserDinoBundle\Entity\Blog\Comment $child
-     */
-    public function removeChild(\AddUserDinoBundle\Entity\Blog\Comment $child)
-    {
-        $this->children->removeElement($child);
-    }
 }
+

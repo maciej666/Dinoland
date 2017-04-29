@@ -2,17 +2,15 @@
 
 namespace AddUserDinoBundle\Controller;
 
+use AddUserDinoBundle\Entity\Blog\Comment;
+use AddUserDinoBundle\Entity\Blog\Post;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use AddUserDinoBundle\Entity\DinoParameters;
-use AddUserDinoBundle\Entity\User;
-use AddUserDinoBundle\Form\DinoType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Klasa do testowania rozwiązań. Do usunięcia
@@ -28,34 +26,19 @@ class UserDinoController extends Controller
      */
     public function test(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $dinoParameters = new DinoParameters();
-
-        $form = $this->createFormBuilder($dinoParameters)
-            ->add('backup', TextType::class)
-            ->add('health', TextType::class)
-            ->add('strength', TextType::class)
-            ->add('speed', TextType::class)
-            ->add('save', SubmitType::class, array(
-                'attr' => array('class' => 'save'),
-            ))
-            ->getForm()
-        ;
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($dinoParameters);
-            $em->flush();
-
-            $dispatcher = new EventDispatcher();
-            $listener = new TestListener();
-            $dispatcher->addListener('acme.action', array($listener, 'onFooAction'));
-
-            $this->redirect($this->generateUrl('test'));
+        if(!$this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
+            return $this->redirect('login');
         }
 
+        $em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('AddUserDinoBundle:Blog\Comment');
+
+        $form = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
+        $htmlTree = $repo->childrenHierarchy();
+//        dump($htmlTree);die;
         return array(
-            'form' => isset($form) ? $form->createView() : NULL
+            'htmltree' => $htmlTree,
+            'form' => $form->createView()
         );
     }
 
@@ -67,6 +50,16 @@ class UserDinoController extends Controller
      */
     function test2Action()
     {
+        return array();
+    }
+
+
+    /**
+     * @return array
+     * @Route ("/payu", name="payu")
+     * @Template
+     */
+    function testPayUAction() {
         return array();
     }
 }

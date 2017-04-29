@@ -99,6 +99,7 @@ stof_doctrine_extensions:
             timestampable: true
             uploadable: true
             loggable: true
+            tree: true
 
 
 lexik_jwt_authentication:
