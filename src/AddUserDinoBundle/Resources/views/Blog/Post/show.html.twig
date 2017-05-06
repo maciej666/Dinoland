@@ -47,10 +47,11 @@
             <h5><span class="label label-danger">Food</span> <span class="label label-primary">Ipsum</span></h5><br>
             <p>{{ post.body }}</p>
             <span id="post-id" data-postid="{{ post.id }}"></span>
+            <span id="post-slug" data-postslug="{{ post.slug }}"></span>
             <br><br>
 
             <h4>Dodaj Komentarz:</h4>
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'action': path('blog_create_comment', {slug: post.slug})}}) }}
             {% if app.user != null %}
             {{ form_row(form.authorName, {'value': app.user.name}) }}
             {% else %}
@@ -69,7 +70,7 @@
                 </ul>
 
                 <div id='comment-form' class='panel-group' style="display: none; margin-top: 20px;" >
-                    {{ form_start(form2, {'attr': {'class': 'save_comment_form', 'novalidate': 'novalidate'}}) }}
+                    {{ form_start(form2, {'attr': {'class': 'save_comment_form', 'novalidate': 'novalidate', 'action': path('blog_create_comment', {slug: post.slug})}}) }}
                     {% if app.user != null %}
                         {{ form_row(form2.authorName, {'value': app.user.name}) }}
                     {% else %}

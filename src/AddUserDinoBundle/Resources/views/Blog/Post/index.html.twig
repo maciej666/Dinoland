@@ -32,6 +32,13 @@
                     <span>{{ pagerfanta(paginatedCollection, 'twitter_bootstrap3') }}</span>
                 </div>
             </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $.(document).ready(function() {
+            $('.col-sm-3:first').show();
+        });
+    </script>
 
 {% endblock %}
 

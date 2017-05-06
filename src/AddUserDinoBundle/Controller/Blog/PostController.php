@@ -71,7 +71,7 @@ class PostController extends Controller
     }
 
     /**
-     * Finds and displays a post entity.
+     * Finds and displays a post entity with comments.
      *
      * @Route("/post/{slug}", name="blog_post_show")
      * @Template
@@ -82,11 +82,11 @@ class PostController extends Controller
         $form = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
         $form2 = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
 
+//        $em = $this->getDoctrine()->getManager();
+//
 //        $user = $this->getUser();
-//        $post = new Post();
-//        $post->setUser($user);
-//        $post->setTitle('post test');
-//        $post->setBody('o ho');
+//        $post = $em->getRepository('AddUserDinoBundle:Blog\Post')->findOneById(3);
+//
 //        $c1 = new Comment();
 //        $c1->setAuthorName('parent');
 //        $c1->setBody('parent body');
@@ -99,12 +99,21 @@ class PostController extends Controller
 //        $c2->setUser($user);
 //        $c2->setPost($post);
 //        $c2->setParent($c1);
-
+//
+//        $c3 = new Comment();
+//        $c3->setAuthorName('child second');
+//        $c3->setBody('child body second');
+//        $c3->setUser($user);
+//        $c3->setPost($post);
+//        $c3->setParent($c1);
+//
 //        $em->persist($post);
 //        $em->persist($user);
 //        $em->persist($c1);
 //        $em->persist($c2);
+//        $em->persist($c3);
 //        $em->flush();
+
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AddUserDinoBundle:Blog\Comment');
 
@@ -117,10 +126,11 @@ class PostController extends Controller
             ->orderBy('node.createdAt', 'DESC')
             ->getQuery()
         ;
-        $tree = $repo->buildTree($query->getArrayResult());
 
-//        $htmlTree = $repo->childrenHierarchy();
-//        dump($tree);die;
+        $tree = $repo->buildTree($query->getArrayResult());
+        $htmlTree = $repo->childrenHierarchy();
+        dump($htmlTree);die;
+
         return array(
             'form' => $form->createView(),
             'form2' => $form2->createView(),
@@ -179,43 +189,6 @@ class PostController extends Controller
         return $this->redirectToRoute('blog_post_index');
     }
 
-
-    /**
-     * Creates comment.
-     *
-     * @Route("/comment/create/{id}/{parent_id}", name="blog_create_comment")
-     *
-     * @Method("POST")
-     */
-    public function createCommentAction(Request $request)
-    {
-        $id = $request->get('id');
-        $parent_id = $request->get('parent_id');
-        dump($parent_id);die;
-        $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:Blog\Post');
-        $post = $repository->findOneById($id);
-        $slug = $post->getSlug();
-        $user = $this->getUser();
-
-        if(!$post) {
-            throw new HttpException('Nie ma takiego posta');
-        }
-
-        $form = $this->container->get('dino_blog_manager')->createComment($post, $request, $user);
-
-        if (true === $form){
-            $this->get('session')->getFlashBag()->add('success', 'Dodano komentarz');
-
-            return $this->redirect($this->generateUrl('blog_post_show', array(
-                'slug' => $post->getSlug()
-            )));
-        }
-        return $this->redirect($this->generateUrl('blog_post_show', array(
-            'slug' => $slug,
-            'post' => $post,
-            'form' => $form->createView()
-        )));
-    }
 
 
     /**

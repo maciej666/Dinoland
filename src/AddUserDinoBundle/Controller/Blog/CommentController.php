@@ -23,11 +23,11 @@ class CommentController extends Controller
     /**
      * Creates comment.
      *
-     * @Route("/{slug}/comment/create", name="blog_create_comment")
+     * @Route("/{slug}/comment/create/{parentId}", defaults={"parentId" = null}, name="blog_create_comment")
      *
      * @Method("POST")
      */
-    public function createCommentAction(Request $request, $slug)
+    public function createCommentAction(Request $request, $slug, $parentId)
     {
         $repository = $this->getDoctrine()->getManager()->getRepository('AddUserDinoBundle:Blog\Post');
         $post = $repository->findOneBySlug($slug);
@@ -37,10 +37,9 @@ class CommentController extends Controller
             throw new HttpException('Nie ma takiego posta');
         }
 
-        $form = $this->container->get('dino_blog_manager')->createComment($post, $request, $user);
-        if (true === $form){
+        $form = $this->container->get('dino_blog_manager')->createComment($post, $request, $user, $parentId);
+        if (true === $form) {
             $this->get('session')->getFlashBag()->add('success', 'Dodano komentarz');
-
             return $this->redirect($this->generateUrl('blog_post_show', array(
                 'slug' => $post->getSlug()
             )));
@@ -66,7 +65,8 @@ class CommentController extends Controller
         $fresh_comments = $repository->getFreshCommentsTree($post_id, $last_comment);
 
         $check_parent = $this->container->get('dino_blog_manager')->whatever($fresh_comments, 'lft', '2');
-        dump($fresh_comments, $check_parent);die;
+//        dump('hahaha');die;
+//        dump($fresh_comments, $check_parent);die;
 
         $template = $this->render('AddUserDinoBundle:Blog/Post:commentAjax.html.twig',array(
             'fresh_comments' => $fresh_comments,
@@ -79,7 +79,7 @@ class CommentController extends Controller
                 "code" => 200, //200 z jakiegoś powodu nie działa??
                 "success" => true,
                 "content" => $content,
-                "child_comments" => $child_comments
+//                "child_comments" => $child_comments
             ));
             $response->headers->set('Content-Type', 'application/json');
 
