@@ -1,12 +1,38 @@
 {% extends 'DinoBundle::base.html.twig' %}
 {% block style %}
     <link href="{{ asset('bundles/adduserdino/css/myblog.css') }}" rel="stylesheet">
+    <style>
+        .modal {
+            text-align: center;
+        }
+
+        @media screen and (min-width: 768px) {
+            .modal:before {
+                display: inline-block;
+                vertical-align: middle;
+                content: " ";
+                height: 100%;
+            }
+        }
+
+        .modal-dialog {
+            display: inline-block;
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
 <div class="container-fluid">
     <div class="row content">
+        <div class="alert alert-info" style="display: none;">
+            <strong>Wysłano :)</strong>Sprawdź swoją skrzynkę email.
+        </div>
+        <div class="alert alert-success" style="display: none;">
+             Pobieranie rozpoczęte:)
+        </div>
         {% for type,messages in app.session.flashbag.all() %}
             {% for msg in messages %}
                 <div class="alert alert-{{ type }}">{{ msg }}</div>
@@ -28,11 +54,55 @@
                   </button>
                 </span>
             </div>
+            <div class="input-group">
+            <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#myModal" style="margin-top: 20px;">Odbierz prenumeratę</button>
+            <button type="button" class="btn btn-info btn-md" id="download-pdf" style="margin-top: 20px;">Pobierz prenumeratę</button>
+            </div>
+        </div>
+        <!-- Email Modal   https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_modal&stacked=h  -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Odbierz prenumeratę</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <form>
+                            <label for="email">Email:</label>
+                            <input type="text" id="email" class="form-control" value="{% if app.user != null %}{{ app.user }}{% endif %}" placeholder="Email">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="send-pdf" type="button" class="btn btn-default" data-dismiss="modal">Wyślij</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Success Modal   https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_modal&stacked=h  -->
+        <div class="modal fade" id="successModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="background-color: greenyellow">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Wysłano maila</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Sprawdź skrzynkę</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <script>
             $(document).ready(function() {
-//                $('.col-sm-3:first').addClass('fadeout');
-//                $('.col-sm-3:first').after('<div class="fadeout"></div>');
 
             });
         </script>
@@ -49,5 +119,5 @@
     </footer>
 {% endblock %}
 {% block javascripts %}
-    <script src="{{ asset('bundles/adduserdino/js/myBlogJs.js') }}"></script>
+    <script src="{{ asset('bundles/adduserdino/js/myBlog.js') }}"></script>
 {% endblock %}

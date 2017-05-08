@@ -5,12 +5,14 @@ namespace AddUserDinoBundle\Entity\Blog;
 use AddUserDinoBundle\Entity\Timestampable;
 use AddUserDinoBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Cache;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Comment
  * @Gedmo\Tree(type="nested")
  * @ORM\Table(name="blog_comment")
+ * @Cache(usage="READ_WRITE", region="my_entity_region")
  * @ORM\Entity(repositoryClass="AddUserDinoBundle\Repository\Blog\CommentRepository")
  */
 class Comment extends Timestampable

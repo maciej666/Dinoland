@@ -5,9 +5,16 @@ namespace AddUserDinoBundle\Controller\Blog;
 use AddUserDinoBundle\Entity\Blog\Comment;
 use AddUserDinoBundle\Entity\Blog\Post;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Swift_Attachment;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
@@ -79,6 +86,8 @@ class PostController extends Controller
      */
     public function showAction(Request $request, Post $post)
     {
+//        $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
+//        $cacheDriver->deleteAll();
         $form = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
         $form2 = $this->createForm('AddUserDinoBundle\Form\Blog\CommentType');
 
@@ -116,7 +125,9 @@ class PostController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('AddUserDinoBundle:Blog\Comment');
-
+        $repo->verify();
+        $repo->recover();
+        $em->clear();
         $query = $em
             ->createQueryBuilder()
             ->select('node', 'u', 'i')
@@ -125,11 +136,13 @@ class PostController extends Controller
             ->leftJoin('u.image', 'i')
             ->orderBy('node.createdAt', 'DESC')
             ->getQuery()
+//            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         ;
+//        $query->useResultCache(false);
 
         $tree = $repo->buildTree($query->getArrayResult());
         $htmlTree = $repo->childrenHierarchy();
-        dump($htmlTree);die;
+//        dump($tree);die;
 
         return array(
             'form' => $form->createView(),
@@ -187,6 +200,88 @@ class PostController extends Controller
         }
 
         return $this->redirectToRoute('blog_post_index');
+    }
+
+    /**
+     * Wysyła maila z prenumeratą
+     * @return JsonResponse
+     */
+    public function sendPdfAction(Request $request)
+    {
+        $email = $request->get('email');
+//        dump($email);die;
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Mail z pdf')
+            ->setFrom('boban.kamienczuk666@gmail.com')
+            ->setTo($email)
+            ->setBody(
+                $this->renderView(
+                // app/Resources/views/Emails/pdf_email.html.twig
+                    'Emails/pdf_email.html.twig'
+                ),
+                'text/html'
+            )
+            ->attach(Swift_Attachment::fromPath('bundles/adduserdino/file/MaciejJędralCvPl.pdf'))
+        ;
+        $this->get('mailer')->send($message);
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            "code" => 200,
+            "success" => true,
+        ));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+
+    /**
+     * Allowed to download file
+     *
+     * @Route("/download/pdf", name="blog_download_pdf")
+     *
+     * @Method("GET")
+     */
+    public function downloadPdfAction()
+    {
+        // You only need to provide the path to your static file
+        // $filepath = 'path/to/TextFile.txt';
+
+        // i.e Sending a file from the resources folder in /web
+        // in this example, the TextFile.txt needs to exist in the server
+        $publicResourcesFolderPath = $this->get('kernel')->getRootDir() . '/../web/bundles/adduserdino/file/';
+        $filename = "MaciejJędralCvPl.pdf";
+
+        // check if file exists
+        $fs = new FileSystem();
+        if (!$fs->exists($publicResourcesFolderPath.$filename)) {
+            throw $this->createNotFoundException();
+        }
+
+        // This should return the file to the browser as response
+        $response = new BinaryFileResponse($publicResourcesFolderPath.$filename);
+
+        // To generate a file download, you need the mimetype of the file
+        $mimeTypeGuesser = new FileinfoMimeTypeGuesser();
+
+        // Set the mimetype with the guesser or manually
+        if($mimeTypeGuesser->isSupported()){
+            // Guess the mimetype of the file according to the extension of the file
+            $response->headers->set('Content-Type', $mimeTypeGuesser->guess($publicResourcesFolderPath.$filename));
+        }else{
+            // Set the mimetype of the file manually, in this case for a text file is text/plain
+            $response->headers->set('Content-Type', 'text/plain');
+        }
+
+        // Set content disposition inline of the file
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $filename,
+            iconv('UTF-8', 'ASCII//TRANSLIT', $filename)
+        );
+
+        return $response;
     }
 
 

@@ -3,25 +3,25 @@ $(document).ready(function() {
     //chowa info o dodaniu komentarza
     $('.alert').fadeOut(4000);
 
-    ////wysyła zapytanie o nowe komentarze
-    //var last_comment = $('.comments-date:first').data('last');
-    //var post_id = $('#post-id').data('postid');
-    //setInterval(function() {
-    //    $.post('http://www.dino.dev/app_dev.php/blog/load_fresh_comments',
-    //        {
-    //            last_comment: last_comment,
-    //            post_id: post_id
-    //        },
-    //        function (response) {
-    //            if (response.code == 200 && response.success) {
-    //                var parsedData =JSON.parse(response.content);
-    //                $(parsedData).hide().prependTo(".main-menu").fadeIn(4000);
-    //                last_comment = $('.comments-date:first').data('last');
-    //            } else {
-    //                console.log('204: Nie ma nowych komentarzy');
-    //            }
-    //        }, "json")
-    //}, 5000);
+    //wysyła zapytanie o nowe komentarze
+    var last_comment = $('.comments-date:first').data('last');
+    var post_id = $('#post-id').data('postid');
+    setInterval(function() {
+        $.post('http://www.dino.dev/app_dev.php/blog/load_fresh_comments',
+            {
+                last_comment: last_comment,
+                post_id: post_id
+            },
+            function (response) {
+                if (response.code == 200 && response.success) {
+                    var parsedData =JSON.parse(response.content);
+                    $(parsedData).hide().prependTo(".main-menu").fadeIn(4000);
+                    last_comment = $('.comments-date:first').data('last');
+                } else {
+                    console.log('204: Nie ma nowych komentarzy');
+                }
+            }, "json")
+    }, 5000);
 
     //boczny panel menu
     $('.col-sm-3:first').hide();
@@ -72,7 +72,9 @@ $(document).ready(function() {
     {
         e.preventDefault();
         var postSlug = $('#post-slug').data('postslug');
-        var parentId = '535';
+        var parentId = $(this).closest('li').find('.comments-id').data('id');
+        console.log(parentId);
+        //return;
         $.post('/app_dev.php/blog/'+postSlug+'/comment/create/'+parentId, $(this).serialize(),
             function (response) {
                 if (response.code == 200 && response.success) {
@@ -82,6 +84,31 @@ $(document).ready(function() {
                     console.log('bad');
                 }
             }, "json");
+    });
+
+    //send pdf on email
+    $('#send-pdf').on('click', function(e)
+    {
+        var email = $('#email').val();
+        window.scrollTo(0, 0);
+        $('.alert-info').show().fadeOut(7000);
+        e.preventDefault();
+        $.post('/app_dev.php/blog/send_pdf_email',
+            {
+            email: email
+            },
+            function (response) {
+                if (response.code == 200 && response.success) {
+                    console.log('wysłano');
+                }
+            }, "json");
+    });
+
+
+    //download pdf
+    $("#download-pdf").on('click', function() {
+        location.href = "/app_dev.php/blog/download/pdf";
+            $('.alert-success').show().fadeOut(5000);
     });
 
 });

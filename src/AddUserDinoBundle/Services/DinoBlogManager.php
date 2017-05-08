@@ -32,7 +32,7 @@ class DinoBlogManager
     }
 
     /**
-     *
+     * Create comment
      * @param Post      $post
      * @param Request   $request
      *
@@ -42,31 +42,35 @@ class DinoBlogManager
     {
         $comment = new Comment();
         $comment->setPost($post);
-        $comment->setUser($user);
+        $repo = $this->em->getRepository('AddUserDinoBundle:Blog\Comment');
+
+        //if user is logged set comment to user
+        if ($user != null) {
+            $comment->setUser($user);
+            $this->em->persist($user);
+        }
+        //if comment has parent then save parent relation
+        if ($parentId != null) {
+            $parentComment = $repo->findOneById($parentId);
+//                dump($parentComment);die;
+            $comment->setParent($parentComment);
+            $this->em->persist($parentComment);
+        }
 
         $form = $this->formFactory->create(CommentType::class, $comment);
         $form->handleRequest($request);
         if($form->isValid()){
-            //if comment has parent then save parent relation
-            if($parentId != null) {
-                $repo = $this->em->getRepository('AddUserDinoBundle:Blog\Comment');
-                $parentComment = $repo->findOneById($parentId);
-//                dump($parentComment);die;
-                $comment->setParent($parentComment);
-                $this->em->persist($parentComment);
-            }
             $this->em->persist($comment);
             $this->em->persist($post);
-            $this->em->persist($user);
 //            $repo->verify();
 //            $repo->reorder(null/*reorder starting from parent*/, 'createdAt', 'DESC', true);
-
 //            $this->em->getRepository('AddUserDinoBundle:Blog\Comment')->persistAsLastChildOf($comment, $parentComment);
             $this->em->flush();
             $repo->verify();
             $repo->recover();
             $this->em->clear();
-
+            $cacheDriver = new \Doctrine\Common\Cache\ArrayCache();
+            $cacheDriver->deleteAll();
             return true;
         }
         return $form;

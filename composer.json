@@ -37,8 +37,7 @@
         "twig/extensions": "^1.4",
         "snilius/twig-sort-by-field": "^0.1.5",
         "symfony/assetic-bundle": "^2.8",
-        "accesto/payum-pay-u": "dev-master",
-        "payum/payum-bundle": "1.0.x-dev"
+        "php-amqplib/rabbitmq-bundle": "^1.12"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
